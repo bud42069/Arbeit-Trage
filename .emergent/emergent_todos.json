@@ -1,0 +1,102 @@
+[
+  {
+    "content": "Call integration agent for Coinbase Advanced, Gemini, and Helius to get implementation playbooks",
+    "status": "pending"
+  },
+  {
+    "content": "Install required backend dependencies (websockets, aiohttp, prometheus-client, solana-py, anchorpy)",
+    "status": "pending"
+  },
+  {
+    "content": "Install required frontend dependencies (recharts, framer-motion for animations)",
+    "status": "pending"
+  },
+  {
+    "content": "Set up monorepo structure (apps/, packages/) with core packages (shared, config, telemetry)",
+    "status": "pending"
+  },
+  {
+    "content": "Implement Coinbase Advanced connector with WS L2 book + REST IOC orders (sandbox/mock mode)",
+    "status": "pending"
+  },
+  {
+    "content": "Implement Gemini connector with WS L2 book + REST IOC orders (sandbox/mock mode)",
+    "status": "pending"
+  },
+  {
+    "content": "Implement Solana DEX connector with Helius RPC/WS + pool math (x*y=k and CLMM)",
+    "status": "pending"
+  },
+  {
+    "content": "Build in-memory event bus for POC with typed event models (cex.bookUpdate, dex.poolUpdate, exec.try, exec.result)",
+    "status": "pending"
+  },
+  {
+    "content": "Implement signal engine (PnL computation with fees/impact/haircut, windowing, threshold detection)",
+    "status": "pending"
+  },
+  {
+    "content": "Implement execution engine with dual-leg orchestration, idempotency keys, retry logic, partial hedge stubs",
+    "status": "pending"
+  },
+  {
+    "content": "Set up MongoDB repository pattern with collections (opportunities, trades, windows, configs, inventory)",
+    "status": "pending"
+  },
+  {
+    "content": "Implement Prometheus metrics (latency, opportunities, trades, staleness) and structured logging",
+    "status": "pending"
+  },
+  {
+    "content": "Build FastAPI gateway with REST endpoints (/v1/status, /v1/opportunities, /v1/trades, /v1/controls) and WebSocket",
+    "status": "pending"
+  },
+  {
+    "content": "Apply design system tokens from design_guidelines.md to index.css and tailwind.config.js",
+    "status": "pending"
+  },
+  {
+    "content": "Build React UI foundation: Layout with top bar, left sidebar, main content area (dark + lime theme)",
+    "status": "pending"
+  },
+  {
+    "content": "Implement Overview screen with KPI cards (Net PnL, Capture Rate, Latency, Active Windows) + sparklines",
+    "status": "pending"
+  },
+  {
+    "content": "Implement Opportunities screen with live table, filters, and real-time updates",
+    "status": "pending"
+  },
+  {
+    "content": "Implement Trades screen with ledger table and CSV export functionality",
+    "status": "pending"
+  },
+  {
+    "content": "Implement status indicators with pulse animations (lime=healthy, amber=degraded, red=down)",
+    "status": "pending"
+  },
+  {
+    "content": "Implement OBSERVE-ONLY toggle and pause/resume controls in UI",
+    "status": "pending"
+  },
+  {
+    "content": "Wire up WebSocket connection from UI to gateway for real-time updates",
+    "status": "pending"
+  },
+  {
+    "content": "Implement staleness kill-switch (>10s WS gap → pause + banner alert)",
+    "status": "pending"
+  },
+  {
+    "content": "Create basic Grafana dashboard JSON for latency p50/p95, opportunity rate, staleness gauges",
+    "status": "pending"
+  },
+  {
+    "content": "Test end-to-end flow: mock data → signal → exec.try → persist → UI display with <200ms staleness",
+    "status": "pending"
+  },
+  {
+    "content": "Call testing agent for Phase 1: unit tests + integration tests for connectors, signal engine, executor",
+    "status": "pending"
+  }
+]
