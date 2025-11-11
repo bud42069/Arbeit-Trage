@@ -13,19 +13,19 @@
   },
   {
     "content": "Build UI Layout: top bar with status pills + left sidebar navigation + main content area",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Implement Overview screen: KPI cards (Net PnL, Capture Rate, p95 Latency, Active Windows) with sparklines",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Implement Opportunities screen: live table with filters + real-time WebSocket updates",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Implement Trades screen: ledger table with realized PnL + CSV export",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Wire WebSocket connection in UI to receive opportunities and trades from gateway",
@@ -33,7 +33,7 @@
   },
   {
     "content": "Test Gemini connector with real API keys (WS L2 connection + order placement)",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Test Solana connector with Helius mainnet (pool state fetching)",
