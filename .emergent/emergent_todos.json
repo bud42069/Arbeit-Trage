@@ -1,7 +1,7 @@
 [
   {
     "content": "Implement real Solana Whirlpool account parsing to replace mock $204 price",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Add unit tests for pool math, PnL calculation, and signal detection",
@@ -9,7 +9,7 @@
   },
   {
     "content": "Create operator runbook (startup, monitoring, troubleshooting, emergency procedures)",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Test execution engine with small live trades ($10-50) in OBSERVE_ONLY mode",
@@ -17,6 +17,6 @@
   },
   {
     "content": "Verify realistic spreads after real Solana parsing",
-    "status": "pending"
+    "status": "completed"
   }
 ]
