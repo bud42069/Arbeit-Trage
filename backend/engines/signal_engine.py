@@ -91,6 +91,7 @@ class SignalEngine:
         # Direction 1: Buy CEX, Sell DEX
         if dex_price > cex_ask:
             spread_pct = ((dex_price - cex_ask) / cex_ask) * Decimal(100)
+            logger.info(f"CEX→DEX spread detected: {asset} spread={spread_pct:.4f}% (CEX ask={cex_ask}, DEX mid={dex_price})")
             await self._evaluate_opportunity(
                 asset=asset,
                 direction="cex_to_dex",
@@ -102,6 +103,7 @@ class SignalEngine:
         # Direction 2: Buy DEX, Sell CEX
         if cex_bid > dex_price:
             spread_pct = ((cex_bid - dex_price) / dex_price) * Decimal(100)
+            logger.info(f"DEX→CEX spread detected: {asset} spread={spread_pct:.4f}% (CEX bid={cex_bid}, DEX mid={dex_price})")
             await self._evaluate_opportunity(
                 asset=asset,
                 direction="dex_to_cex",
