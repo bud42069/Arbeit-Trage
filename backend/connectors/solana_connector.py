@@ -64,50 +64,72 @@ class SolanaConnector:
     
     async def fetch_pool_state(self, pool_address: str) -> Optional[Dict]:
         """
-        Fetch Solana pool state with real market price.
+        Fetch real Whirlpool pool state with proper sqrtPrice parsing.
         
-        For POC: Uses CoinGecko API to get real SOL/USD price as DEX reference.
-        For production: Parse actual Whirlpool sqrtPrice and vault reserves.
+        Whirlpool account layout:
+        - Bytes 0-7: Discriminator
+        - Bytes 8: bump (u8)
+        - Bytes 9-12: tickSpacing (i32)
+        - Bytes 13-16: tickCurrentIndex (i32)
+        - Bytes 16-31: sqrtPrice (u128) <- KEY FIELD
         """
         try:
-            # Fetch real SOL/USD price from CoinGecko
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    "https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd",
-                    timeout=5.0
-                )
-                if response.status_code == 200:
-                    data = response.json()
-                    real_sol_price = Decimal(str(data["solana"]["usd"]))
-                    
-                    # Add slight randomness to simulate DEX price variance (±0.3%)
-                    import random
-                    variance = Decimal(str(random.uniform(-0.003, 0.003)))
-                    dex_price = real_sol_price * (Decimal("1") + variance)
-                    
-                    logger.info(f"Real market price for SOL/USD: ${real_sol_price}, DEX sim: ${dex_price}")
-                    
-                    # Estimate reserves for a $1M liquidity pool
-                    estimated_liquidity_usd = Decimal("1000000")
-                    estimated_sol = estimated_liquidity_usd / (dex_price * Decimal("2"))
-                    estimated_usdc = estimated_liquidity_usd / Decimal("2")
-                    
-                    return {
-                        "address": pool_address,
-                        "token_a_reserve": estimated_usdc,
-                        "token_b_reserve": estimated_sol,
-                        "fee_bps": 30,
-                        "last_update": datetime.utcnow(),
-                        "price_mid": dex_price,
-                        "data_source": "coingecko_real_price"
-                    }
+            from solders.pubkey import Pubkey
+            import struct
             
-            # Fallback to mock if CoinGecko fails
-            logger.warning("CoinGecko API failed, using mock data")
-            return self._get_mock_pool_for_testing(pool_address)
+            pubkey = Pubkey.from_string(pool_address)
+            response = await self.client.get_account_info(pubkey)
+            
+            if not response.value or not response.value.data:
+                logger.warning(f"No account data for pool {pool_address}, using fallback")
+                return self._get_mock_pool_for_testing(pool_address)
+            
+            account_data = bytes(response.value.data)
+            
+            # Verify sufficient data length
+            if len(account_data) < 32:
+                logger.warning(f"Account data too short ({len(account_data)} bytes), using fallback")
+                return self._get_mock_pool_for_testing(pool_address)
+            
+            # Parse sqrtPrice (u128 little-endian at offset 16)
+            sqrt_price_bytes = account_data[16:32]  # 16 bytes for u128
+            sqrt_price_raw = int.from_bytes(sqrt_price_bytes, byteorder='little')
+            
+            # sqrtPrice is in Q64.64 fixed-point format
+            # Formula: actual_sqrt_price = raw_value / 2^64
+            sqrt_price_decimal = Decimal(sqrt_price_raw) / Decimal(2 ** 64)
+            
+            # Calculate price: price = (sqrtPrice)^2
+            price_mid = sqrt_price_decimal * sqrt_price_decimal
+            
+            logger.info(f"Parsed Whirlpool {pool_address}: sqrtPrice_raw={sqrt_price_raw}, price=${price_mid}")
+            
+            # Check if price is inverted (USDC/SOL vs SOL/USDC)
+            if price_mid < Decimal("1.0"):
+                # This is USDC per SOL, we want SOL per USDC
+                price_mid = Decimal("1.0") / price_mid
+                logger.info(f"Inverted price to SOL/USDC: ${price_mid}")
+            
+            # Estimate reserves for constant-product pools
+            # For CLMM (concentrated liquidity), this is simplified
+            estimated_liquidity_usd = Decimal("1000000")
+            estimated_sol = estimated_liquidity_usd / (price_mid * Decimal("2"))
+            estimated_usdc = estimated_liquidity_usd / Decimal("2")
+            
+            return {
+                "address": pool_address,
+                "token_a_reserve": estimated_usdc,
+                "token_b_reserve": estimated_sol,
+                "fee_bps": 30,
+                "last_update": datetime.utcnow(),
+                "price_mid": price_mid,
+                "sqrt_price_raw": sqrt_price_raw,
+                "data_source": "whirlpool_on_chain"
+            }
             
         except Exception as e:
-            logger.error(f"Failed to fetch real SOL price: {e}")
+            logger.error(f"Whirlpool parsing failed for {pool_address}: {e}", exc_info=True)
+            # Fallback to realistic mock
             return self._get_mock_pool_for_testing(pool_address)
     
     def _get_mock_pool_for_testing(self, pool_address: str) -> dict:
