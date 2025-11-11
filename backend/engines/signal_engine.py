@@ -86,16 +86,21 @@ class SignalEngine:
         cex_book = self.cex_books.get(cex_symbol)
         dex_pool = self.dex_pools.get(asset)
         
+        logger.debug(f"Checking {asset}: CEX book={bool(cex_book)}, DEX pool={bool(dex_pool)}")
+        
         if not cex_book or not dex_pool:
             return
         
         # Parse best prices
         if not cex_book.bids or not cex_book.asks:
+            logger.debug(f"{asset}: CEX book has no bids/asks")
             return
         
         cex_bid = Decimal(cex_book.bids[0][0])
         cex_ask = Decimal(cex_book.asks[0][0])
         dex_price = dex_pool.price_mid
+        
+        logger.info(f"{asset} prices: CEX bid={cex_bid}, ask={cex_ask}, DEX mid={dex_price}")
         
         # Check both directions
         # Direction 1: Buy CEX, Sell DEX
