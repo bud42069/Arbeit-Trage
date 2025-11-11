@@ -98,9 +98,15 @@ class SolanaConnector:
             sqrt_price = Decimal(sqrt_price_raw) / Decimal(2 ** 64)
             
             # Calculate actual price: price = (sqrtPrice)^2
-            price_mid = sqrt_price * sqrt_price
+            price_raw = sqrt_price * sqrt_price
             
-            logger.info(f"Real Whirlpool price for {pool_address}: ${price_mid}")
+            # Check if price needs inversion (if < 1, it's USDC/SOL, we want SOL/USDC)
+            if price_raw < Decimal("1"):
+                price_mid = Decimal("1") / price_raw
+                logger.info(f"Real Whirlpool price for {pool_address}: ${price_mid} (inverted from ${price_raw})")
+            else:
+                price_mid = price_raw
+                logger.info(f"Real Whirlpool price for {pool_address}: ${price_mid}")
             
             # For reserves, we'd need to fetch token vault accounts
             # For POC, estimate reserves from price
