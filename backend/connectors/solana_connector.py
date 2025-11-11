@@ -91,8 +91,10 @@ class SolanaConnector:
                 logger.warning(f"Account data too short ({len(account_data)} bytes), using fallback")
                 return self._get_mock_pool_for_testing(pool_address)
             
-            # Parse sqrtPrice (u128 little-endian at offset 16)
-            sqrt_price_bytes = account_data[16:32]  # 16 bytes for u128
+            # Whirlpool account has 8-byte Anchor discriminator first
+            # Then: bump(1) + tickSpacing(4) + tickCurrentIndex(4) + padding
+            # sqrtPrice (u128) starts at byte 24 (8 + 1 + 4 + 4 + 7 padding for alignment)
+            sqrt_price_bytes = account_data[24:40]  # 16 bytes for u128
             sqrt_price_raw = int.from_bytes(sqrt_price_bytes, byteorder='little')
             
             # sqrtPrice is in Q64.64 fixed-point format
