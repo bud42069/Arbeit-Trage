@@ -158,7 +158,10 @@ async def get_opportunities(limit: int = 100) -> List[dict]:
 
 
 @app.get("/v1/trades")
-async def get_trades(asset: Optional[str] = None, limit: int = 100) -> List[dict]:
+async def get_trades(
+    asset: Optional[str] = None,
+    limit: int = 100
+) -> dict:
     """Get recent trades."""
     if not trade_repo:
         raise HTTPException(status_code=503, detail="Database not initialized")
@@ -168,7 +171,7 @@ async def get_trades(asset: Optional[str] = None, limit: int = 100) -> List[dict
     else:
         trades = await trade_repo.find_recent(limit=limit)
     
-    return [trade.model_dump(mode="json") for trade in trades]
+    return {"trades": [t.model_dump(mode="json") for t in trades]}
 
 
 @app.get("/v1/windows")
