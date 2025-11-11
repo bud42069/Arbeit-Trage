@@ -1,50 +1,26 @@
 [
   {
-    "content": "Update .env with fresh Gemini API keys and Coinbase CDP credentials",
-    "status": "completed"
-  },
-  {
-    "content": "Build Coinbase Advanced connector with CDP JWT auth + WS L2 orderbook + REST IOC orders",
-    "status": "completed"
-  },
-  {
-    "content": "Apply design system (dark + lime tokens) to frontend index.css and tailwind.config.js",
-    "status": "completed"
-  },
-  {
-    "content": "Build UI Layout: top bar with status pills + left sidebar navigation + main content area",
-    "status": "completed"
-  },
-  {
-    "content": "Implement Overview screen: KPI cards (Net PnL, Capture Rate, p95 Latency, Active Windows) with sparklines",
-    "status": "completed"
-  },
-  {
-    "content": "Implement Opportunities screen: live table with filters + real-time WebSocket updates",
-    "status": "completed"
-  },
-  {
-    "content": "Implement Trades screen: ledger table with realized PnL + CSV export",
-    "status": "completed"
-  },
-  {
     "content": "Wire WebSocket connection in UI to receive opportunities and trades from gateway",
-    "status": "pending"
-  },
-  {
-    "content": "Test Gemini connector with real API keys (WS L2 connection + order placement)",
     "status": "in_progress"
   },
   {
-    "content": "Test Solana connector with Helius mainnet (pool state fetching)",
+    "content": "Find and configure real Solana pool addresses (Orca/Raydium SOL/USDC)",
     "status": "pending"
   },
   {
-    "content": "Test end-to-end flow: Gemini + Solana → signal → execution → UI display",
+    "content": "Test Coinbase Advanced connector WebSocket + REST API connection",
     "status": "pending"
   },
   {
-    "content": "Add Coinbase Advanced to dual-venue arbitrage (Gemini vs Coinbase vs Solana)",
+    "content": "Enable Solana DEX connector with real pools and test data flow",
+    "status": "pending"
+  },
+  {
+    "content": "Verify signal engine detects real arbitrage opportunities with live data",
+    "status": "pending"
+  },
+  {
+    "content": "Test end-to-end flow: CEX orderbook → DEX pools → signals → execution → UI",
     "status": "pending"
   }
 ]
