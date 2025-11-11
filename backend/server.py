@@ -264,34 +264,44 @@ async def metrics():
 @app.websocket("/api/ws")
 async def websocket_endpoint(websocket: WebSocket):
     """WebSocket endpoint for real-time updates."""
-    await websocket.accept()
-    active_connections.append(websocket)
-    
-    logger.info(f"WebSocket client connected. Total: {len(active_connections)}")
+    logger.info("WebSocket connection attempt received")
     
     try:
+        await websocket.accept()
+        active_connections.append(websocket)
+        
+        logger.info(f"WebSocket client connected. Total: {len(active_connections)}")
+        
         # Send initial status
         await websocket.send_json({
-            "type": "status",
+            "type": "connected",
             "data": {
-                "connected": True,
+                "status": "connected",
                 "timestamp": datetime.utcnow().isoformat()
             }
         })
         
-        # Keep connection alive
+        # Keep connection alive with heartbeat
         while True:
             try:
-                await websocket.receive_text()
+                # Wait for messages or timeout after 30 seconds
+                message = await asyncio.wait_for(websocket.receive_text(), timeout=30.0)
+                # Echo back for debugging
+                logger.debug(f"Received from client: {message}")
+            except asyncio.TimeoutError:
+                # Send ping to keep connection alive
+                await websocket.send_json({"type": "ping"})
             except WebSocketDisconnect:
+                logger.info("WebSocket client disconnected normally")
                 break
             
     except Exception as e:
-        logger.error(f"WebSocket error: {e}")
+        logger.error(f"WebSocket error: {e}", exc_info=True)
     
     finally:
-        active_connections.remove(websocket)
-        logger.info(f"WebSocket client disconnected. Total: {len(active_connections)}")
+        if websocket in active_connections:
+            active_connections.remove(websocket)
+        logger.info(f"WebSocket cleaned up. Total: {len(active_connections)}")
 
 
 async def broadcast_to_clients(message: dict):
