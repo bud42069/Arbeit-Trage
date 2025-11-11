@@ -128,7 +128,7 @@ class SignalEngine:
         predicted_pnl_pct = spread_pct - total_costs
         
         # Check threshold
-        threshold_pct = Decimal("1.0")  # 1.0% for hot windows
+        threshold_pct = Decimal("0.1")  # 0.1% for testing (production: 1.0%)
         
         if predicted_pnl_pct < threshold_pct:
             return
