@@ -126,7 +126,12 @@ async def get_status():
     
     # Add Coinbase status if enabled
     if coinbase_connector:
-        connections["coinbase"] = (coinbase_connector.ws and not coinbase_connector.ws.closed) if hasattr(coinbase_connector, 'ws') else False
+        # Check if WebSocket is open (websockets library uses 'open' property)
+        try:
+            is_connected = coinbase_connector.ws and coinbase_connector.ws.open if hasattr(coinbase_connector, 'ws') else False
+        except:
+            is_connected = False
+        connections["coinbase"] = is_connected
     
     return {
         "status": "healthy",
