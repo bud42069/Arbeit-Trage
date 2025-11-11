@@ -153,8 +153,8 @@ async def get_opportunities(limit: int = 100) -> List[dict]:
     if not opportunity_repo:
         raise HTTPException(status_code=503, detail="Database not initialized")
     
-    opps = await opportunity_repo.find_recent(limit=limit)
-    return [opp.model_dump(mode="json") for opp in opps]
+    opportunities = await opportunity_repo.find_recent(limit=limit)
+    return [o.model_dump(mode="json") for o in opportunities]
 
 
 @app.get("/v1/trades")
