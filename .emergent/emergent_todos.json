@@ -9,7 +9,7 @@
   },
   {
     "content": "Test Coinbase Advanced connector WebSocket + REST API connection",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Enable Solana DEX connector with real pools and test data flow",
@@ -17,7 +17,7 @@
   },
   {
     "content": "Verify signal engine detects real arbitrage opportunities with live data",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Test end-to-end flow: CEX orderbook → DEX pools → signals → execution → UI",
