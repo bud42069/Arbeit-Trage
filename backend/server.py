@@ -44,8 +44,8 @@ async def lifespan(app: FastAPI):
     # Start background tasks
     tasks = [
         asyncio.create_task(gemini_connector.connect_public_ws(["solusd", "btcusd", "ethusd"])),
-        # Note: Solana pool monitoring disabled until real pool addresses configured
-        # asyncio.create_task(solana_connector.subscribe_pool_updates(["mock_pool_1"])),
+        # Solana pool monitoring with real Orca Whirlpool SOL/USDC address
+        asyncio.create_task(solana_connector.subscribe_pool_updates(["HJPjoWUrhoZzkNfRpHuieeFk9WcZWjwy6PBjZ81ngndJ"])),
         asyncio.create_task(monitor_system_status())
     ]
     
