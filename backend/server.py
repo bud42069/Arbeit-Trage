@@ -110,14 +110,20 @@ async def monitor_system_status():
 @app.get("/v1/status")
 async def get_status():
     """Get system status."""
+    connections = {
+        "gemini": gemini_connector.connected,
+        "solana": solana_connector.connected
+    }
+    
+    # Add Coinbase status if enabled
+    if coinbase_connector:
+        connections["coinbase"] = (coinbase_connector.ws and not coinbase_connector.ws.closed) if hasattr(coinbase_connector, 'ws') else False
+    
     return {
         "status": "healthy",
         "timestamp": datetime.utcnow().isoformat(),
         "version": "1.0.0",
-        "connections": {
-            "gemini": gemini_connector.connected,
-            "solana": solana_connector.connected
-        },
+        "connections": connections,
         "risk": risk_service.get_status(),
         "event_stats": event_bus.get_stats()
     }
