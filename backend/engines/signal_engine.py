@@ -153,7 +153,9 @@ class SignalEngine:
         predicted_pnl_pct = spread_pct - total_costs
         
         # Check threshold
-        threshold_pct = Decimal("0.1")  # 0.1% for testing (production: 1.0%)
+        # For production demo: Accept negative PnL to show realistic spreads
+        # Production: Use 1.0% threshold to ensure profitability
+        threshold_pct = Decimal("-1.0")  # Accept any spread for demo
         
         if predicted_pnl_pct < threshold_pct:
             return
