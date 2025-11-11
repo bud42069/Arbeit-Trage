@@ -120,7 +120,7 @@ async def monitor_system_status():
 
 # ============= REST Endpoints =============
 
-@app.get("/v1/status")
+@app.get("/api/v1/status")
 async def get_status():
     """Get system status."""
     connections = {
@@ -147,7 +147,7 @@ async def get_status():
     }
 
 
-@app.get("/v1/opportunities")
+@app.get("/api/v1/opportunities")
 async def get_opportunities(limit: int = 100) -> List[dict]:
     """Get recent opportunities."""
     if not db_module.opportunity_repo:
@@ -157,7 +157,7 @@ async def get_opportunities(limit: int = 100) -> List[dict]:
     return [o.model_dump(mode="json") for o in opportunities]
 
 
-@app.get("/v1/trades")
+@app.get("/api/v1/trades")
 async def get_trades(
     asset: Optional[str] = None,
     limit: int = 100
@@ -174,7 +174,7 @@ async def get_trades(
     return {"trades": [t.model_dump(mode="json") for t in trades]}
 
 
-@app.get("/v1/windows")
+@app.get("/api/v1/windows")
 async def get_windows(asset: Optional[str] = None, limit: int = 50) -> List[dict]:
     """Get recent trading windows."""
     if not db_module.window_repo:
@@ -187,7 +187,7 @@ async def get_windows(asset: Optional[str] = None, limit: int = 50) -> List[dict
     return [w.model_dump(mode="json") for w in windows]
 
 
-@app.post("/v1/test/inject-opportunity")
+@app.post("/api/v1/test/inject-opportunity")
 async def inject_test_opportunity(
     asset: str = "SOL-USD",
     direction: str = "cex_to_dex",
@@ -238,7 +238,7 @@ class ControlAction(BaseModel):
     reason: Optional[str] = None
 
 
-@app.post("/v1/controls/pause")
+@app.post("/api/v1/controls/pause")
 async def pause_trading(action: ControlAction):
     """Pause trading."""
     reason = action.reason or "Manual pause"
@@ -246,14 +246,14 @@ async def pause_trading(action: ControlAction):
     return {"status": "paused", "reason": reason}
 
 
-@app.post("/v1/controls/resume")
+@app.post("/api/v1/controls/resume")
 async def resume_trading():
     """Resume trading."""
     await risk_service.resume()
     return {"status": "resumed"}
 
 
-@app.get("/metrics")
+@app.get("/api/metrics")
 async def metrics():
     """Prometheus metrics endpoint."""
     return Response(content=get_metrics(), media_type="text/plain")
@@ -261,7 +261,7 @@ async def metrics():
 
 # ============= WebSocket =============
 
-@app.websocket("/ws")
+@app.websocket("/api/ws")
 async def websocket_endpoint(websocket: WebSocket):
     """WebSocket endpoint for real-time updates."""
     await websocket.accept()
