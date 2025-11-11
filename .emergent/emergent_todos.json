@@ -1,11 +1,11 @@
 [
   {
     "content": "Update .env with fresh Gemini API keys and Coinbase CDP credentials",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Build Coinbase Advanced connector with CDP JWT auth + WS L2 orderbook + REST IOC orders",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Apply design system (dark + lime tokens) to frontend index.css and tailwind.config.js",
