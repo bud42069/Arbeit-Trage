@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from config import settings
 from shared.types import Trade, Opportunity
 from shared.events import event_bus
-from repositories.db import init_repositories, trade_repo, opportunity_repo, window_repo
+import repositories.db as db_module
 from connectors.gemini_connector import gemini_connector
 from connectors.coinbase_connector import init_coinbase_connector
 from connectors.solana_connector import solana_connector
@@ -44,7 +44,7 @@ async def lifespan(app: FastAPI):
     coinbase_connector = init_coinbase_connector()
     
     # Initialize database
-    await init_repositories()
+    await db_module.init_repositories()
     
     # Start background tasks
     tasks = [
@@ -150,10 +150,10 @@ async def get_status():
 @app.get("/v1/opportunities")
 async def get_opportunities(limit: int = 100) -> List[dict]:
     """Get recent opportunities."""
-    if not opportunity_repo:
+    if not db_module.opportunity_repo:
         raise HTTPException(status_code=503, detail="Database not initialized")
     
-    opportunities = await opportunity_repo.find_recent(limit=limit)
+    opportunities = await db_module.opportunity_repo.find_recent(limit=limit)
     return [o.model_dump(mode="json") for o in opportunities]
 
 
@@ -163,13 +163,13 @@ async def get_trades(
     limit: int = 100
 ) -> dict:
     """Get recent trades."""
-    if not trade_repo:
+    if not db_module.trade_repo:
         raise HTTPException(status_code=503, detail="Database not initialized")
     
     if asset:
-        trades = await trade_repo.find_by_asset(asset, limit=limit)
+        trades = await db_module.trade_repo.find_by_asset(asset, limit=limit)
     else:
-        trades = await trade_repo.find_recent(limit=limit)
+        trades = await db_module.trade_repo.find_recent(limit=limit)
     
     return {"trades": [t.model_dump(mode="json") for t in trades]}
 
@@ -177,13 +177,13 @@ async def get_trades(
 @app.get("/v1/windows")
 async def get_windows(asset: Optional[str] = None, limit: int = 50) -> List[dict]:
     """Get recent trading windows."""
-    if not window_repo:
+    if not db_module.window_repo:
         raise HTTPException(status_code=503, detail="Database not initialized")
     
     if asset:
-        windows = await window_repo.find_by_asset(asset, limit=limit)
+        windows = await db_module.window_repo.find_by_asset(asset, limit=limit)
     else:
-        windows = await window_repo.find_recent(limit=limit)
+        windows = await db_module.window_repo.find_recent(limit=limit)
     return [w.model_dump(mode="json") for w in windows]
 
 
@@ -222,8 +222,8 @@ async def inject_test_opportunity(
     await event_bus.publish("signal.opportunity", opportunity)
     
     # Also persist directly
-    if opportunity_repo:
-        await opportunity_repo.insert(opportunity)
+    if db_module.opportunity_repo:
+        await db_module.opportunity_repo.insert(opportunity)
     
     return {
         "status": "injected",
@@ -318,8 +318,8 @@ async def broadcast_trade(trade: Trade):
     })
     
     # Also persist trade
-    if trade_repo:
-        await trade_repo.insert(trade)
+    if db_module.trade_repo:
+        await db_module.trade_repo.insert(trade)
 
 
 event_bus.subscribe("signal.opportunity", broadcast_opportunity)
