@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Download, ExternalLink } from 'lucide-react';
+import { useWebSocketSubscription } from '../hooks/useWebSocket';
 
 const Trades = () => {
   const [trades, setTrades] = useState([]);
@@ -9,8 +10,27 @@ const Trades = () => {
     avgLatency: 0
   });
 
+  // WebSocket real-time updates
+  const { isConnected } = useWebSocketSubscription('trade', useCallback((newTrade) => {
+    setTrades(prev => {
+      const updated = [newTrade, ...prev];
+      
+      // Recalculate stats
+      const totalPnl = updated.reduce((sum, t) => sum + t.pnl_usd, 0);
+      const avgLatency = updated.reduce((sum, t) => sum + t.latency_ms, 0) / updated.length;
+      
+      setStats({
+        total: updated.length,
+        totalPnl,
+        avgLatency
+      });
+      
+      return updated;
+    });
+  }, []));
+
   useEffect(() => {
-    // Fetch trades from API
+    // Fetch initial trades from API
     const fetchTrades = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/trades`);
@@ -34,8 +54,6 @@ const Trades = () => {
     };
 
     fetchTrades();
-    const interval = setInterval(fetchTrades, 5000);
-    return () => clearInterval(interval);
   }, []);
 
   const handleExportCSV = () => {
