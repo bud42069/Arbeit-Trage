@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Search, Filter, TrendingUp, TrendingDown } from 'lucide-react';
+import { useWebSocketSubscription } from '../hooks/useWebSocket';
 
 const Opportunities = () => {
   const [opportunities, setOpportunities] = useState([]);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
+  // WebSocket real-time updates
+  const { isConnected } = useWebSocketSubscription('opportunity', useCallback((newOpp) => {
+    setOpportunities(prev => [newOpp, ...prev].slice(0, 50)); // Keep last 50
+  }, []));
+
   useEffect(() => {
-    // Fetch opportunities from API
+    // Fetch initial opportunities from API
     const fetchOpportunities = async () => {
       try {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/opportunities`);
@@ -19,8 +25,6 @@ const Opportunities = () => {
     };
 
     fetchOpportunities();
-    const interval = setInterval(fetchOpportunities, 2000);
-    return () => clearInterval(interval);
   }, []);
 
   const filteredOpportunities = opportunities.filter(opp => {
