@@ -9,11 +9,11 @@
   },
   {
     "content": "Apply design system (dark + lime tokens) to frontend index.css and tailwind.config.js",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Build UI Layout: top bar with status pills + left sidebar navigation + main content area",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Implement Overview screen: KPI cards (Net PnL, Capture Rate, p95 Latency, Active Windows) with sparklines",
