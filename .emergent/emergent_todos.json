@@ -1,11 +1,11 @@
 [
   {
     "content": "Wire WebSocket connection in UI to receive opportunities and trades from gateway",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Find and configure real Solana pool addresses (Orca/Raydium SOL/USDC)",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Test Coinbase Advanced connector WebSocket + REST API connection",
