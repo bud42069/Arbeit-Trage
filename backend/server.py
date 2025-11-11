@@ -148,13 +148,13 @@ async def get_status():
 
 
 @app.get("/api/v1/opportunities")
-async def get_opportunities(limit: int = 100) -> List[dict]:
+async def get_opportunities(limit: int = 100) -> dict:
     """Get recent opportunities."""
     if not db_module.opportunity_repo:
         raise HTTPException(status_code=503, detail="Database not initialized")
     
     opportunities = await db_module.opportunity_repo.find_recent(limit=limit)
-    return [o.model_dump(mode="json") for o in opportunities]
+    return {"opportunities": [o.model_dump(mode="json") for o in opportunities]}
 
 
 @app.get("/api/v1/trades")
