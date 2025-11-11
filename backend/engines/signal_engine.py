@@ -58,11 +58,13 @@ class SignalEngine:
     
     async def handle_cex_update(self, book: BookUpdate):
         """Handle CEX order book update."""
-        logger.info(f"SignalEngine: Received CEX update for {book.pair}")
-        self.cex_books[book.pair] = book
-        # Normalize pair name for opportunity checking
-        # Gemini sends uppercase: "SOLUSD", "BTCUSD", "ETHUSD"
+        # Store with lowercase key for consistent lookups
         pair_lower = book.pair.lower()
+        self.cex_books[pair_lower] = book
+        
+        logger.info(f"SignalEngine: Received CEX update for {book.pair}, stored as {pair_lower}")
+        
+        # Normalize pair name for opportunity checking
         if pair_lower == "solusd":
             normalized = "SOL-USD"
         elif pair_lower == "btcusd":
@@ -70,7 +72,8 @@ class SignalEngine:
         elif pair_lower == "ethusd":
             normalized = "ETH-USD"
         else:
-            normalized = book.pair.upper()
+            normalized = pair_lower.upper()
+        
         logger.info(f"SignalEngine: Checking opportunities for {normalized}")
         await self.check_opportunities(normalized)
     
