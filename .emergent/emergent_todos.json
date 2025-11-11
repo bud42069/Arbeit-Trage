@@ -5,11 +5,11 @@
   },
   {
     "content": "Debug signal engine real detection (CEX/DEX price comparison logic)",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Enable WebSocket live updates (fix connection establishment)",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Parse real Solana pool data (replace mock implementation)",
