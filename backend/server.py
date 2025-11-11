@@ -11,7 +11,7 @@ from pydantic import BaseModel
 from config import settings
 from shared.types import Trade, Opportunity
 from shared.events import event_bus
-from repositories.db import init_repositories, trade_repo, opportunity_repo, window_repo
+from repositories import db
 from connectors.gemini_connector import gemini_connector
 from connectors.coinbase_connector import init_coinbase_connector
 from connectors.solana_connector import solana_connector
