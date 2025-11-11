@@ -93,7 +93,7 @@ export const useWebSocket = (url) => {
  */
 export const useWebSocketSubscription = (eventType, onMessage) => {
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-  const wsUrl = backendUrl.replace('http', 'ws') + '/ws';
+  const wsUrl = backendUrl.replace('http', 'ws') + '/api/ws';
   
   const { lastMessage, isConnected } = useWebSocket(wsUrl);
 
