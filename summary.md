@@ -1,0 +1,530 @@
+<analysis>
+The user requested a production-grade CEX/DEX arbitrage application capable of operating across centralized exchanges (Gemini primary, Coinbase Advanced future) and Solana decentralized exchanges. The system was specified to meet strict SLOs (p50 ≤ 700ms latency, ≥60% opportunity capture, ≥99% trade verification) with comprehensive observability, risk controls, and an institutional-grade operator UI.
+
+The approach taken was to build a monorepo architecture with separate services for market data ingestion, signal detection, execution, risk management, and operator interface. The implementation began with foundational infrastructure including configuration management, event bus, type definitions, exchange connectors (Gemini and Solana), signal/execution engines, risk service, database repositories, and a FastAPI gateway with WebSocket support.
+
+Work completed includes:
+- Complete backend infrastructure with 13 Python modules across connectors, engines, services, repositories, and observability
+- Configuration system with environment variable management
+- In-memory event bus for service communication
+- Gemini exchange connector with WebSocket L2 orderbook and REST IOC orders using HMAC-SHA384 authentication
+- Solana DEX connector with Helius RPC integration and constant-product pool math
+- Signal engine for opportunity detection with windowing and PnL calculation
+- Execution engine for dual-leg arbitrage trades with idempotency
+- Risk service with kill-switches, daily limits, and staleness monitoring
+- MongoDB repositories for trades, opportunities, windows, and inventory
+- Prometheus metrics for observability
+- FastAPI REST API with endpoints for status, opportunities, trades, windows, and controls
+- WebSocket endpoint for real-time updates to UI
+- Backend dependencies installed (websockets, aiohttp, prometheus-client, solana, anchorpy)
+- Frontend dependencies added (recharts, framer-motion)
+- Production environment configuration with live Helius mainnet credentials
+- Design system documentation (1,199 lines) with institutional dark mode + lime accent specifications
+- Strategic implementation plan with 4-phase roadmap
+- Integration playbooks for Coinbase Advanced (15k+ words) and Gemini (11k+ words)
+
+The system architecture is functional but incomplete - backend services are implemented but frontend UI screens are not yet built, and the system has not been tested end-to-end.
+</analysis>
+
+<product_requirements>
+**Primary Problem:**
+Build a production-grade arbitrage application that captures cross-venue spot arbitrage opportunities between CEX (Gemini/Coinbase) and DEX (Solana) with dual-leg near-simultaneous execution.
+
+**Specific Features Requested:**
+1. Real-time market data ingestion from Gemini (WS L2 orderbook) and Solana DEX pools (Helius RPC/WS)
+2. Arbitrage signal detection with PnL calculation including fees, impact, and slippage haircut
+3. Dual-leg execution engine with concurrent CEX IOC orders and DEX swaps
+4. Risk management with kill-switches (staleness >10s, daily loss limits, prediction error gates)
+5. Inventory tracking and rebalancing (alert/auto modes)
+6. Time-of-day windowing with aggressiveness multipliers
+7. Operator Console UI with 8 screens: Overview, Opportunities, Execution Monitor, Trades, Inventory, Risk, Reports, Settings
+8. Real-time WebSocket updates to UI
+9. Prometheus metrics and Grafana dashboards
+10. MongoDB persistence for trades, opportunities, windows, inventory
+11. Idempotent execution with trade-idempotency keys
+12. OBSERVE-ONLY mode toggle
+
+**Acceptance Criteria:**
+- SLOs: p50 ≤ 700ms detect→fill latency, p95 ≤ 1.5s
+- Opportunity capture ≥ 60% during hot windows
+- Trade verification success ≥ 99%, partial fill rate ≤ 10%
+- Kill-switch triggers ≤ 1/day
+- No duplicate orders on restart
+- 7-day production run with zero critical incidents
+- ≥500 trades across ≥3 assets (SOL-USD, BTC-USD, ETH-USD)
+- Realized vs predicted PnL median error ≤ 25%
+
+**Constraints:**
+- NY-compliant CEX stack (Gemini primary, Coinbase Advanced disabled due to CDP vs Advanced Trade API mismatch)
+- Solana mainnet with Helius RPC/WS (live key provided: 625e29ab-4bea-4694-b7d8-9fdda5871969)
+- USDC(SPL) settlement rail via Gemini
+- MongoDB for POC storage (migration path to Postgres/Timescale documented)
+- In-memory event bus for POC (migration path to NATS documented)
+- React UI (not Next.js as originally specified) due to environment constraints
+- Dark mode + lime accent (#A3E635) design system (Fortune 500 institutional quality)
+
+**Technical Requirements:**
+- Python 3.11+ with asyncio for backend
+- FastAPI for REST API and WebSocket gateway
+- React + shadcn/ui + Tailwind for frontend
+- MongoDB with Motor async driver
+- Prometheus metrics with /metrics endpoint
+- WebSocket real-time updates
+- HMAC-SHA384 authentication for Gemini
+- Constant-product (x*y=k) and CLMM pool math for Solana
+- IOC (immediate-or-cancel) order execution on CEX
+- Concurrent dual-leg submission with retry logic
+</product_requirements>
+
+<key_technical_concepts>
+**Languages and Runtimes:**
+- Python 3.11+ (backend services, asyncio event loop)
+- JavaScript/React (frontend UI)
+- TypeScript (type definitions for integration playbooks)
+
+**Frameworks and Libraries:**
+- FastAPI 0.110.1 (REST API, WebSocket gateway, lifespan management)
+- Motor 3.3.1 (async MongoDB driver)
+- Pydantic 2.6.4+ (settings management, data validation, serialization)
+- websockets 15.0 (WebSocket client for CEX connections)
+- aiohttp 3.13.2 (async HTTP client)
+- httpx 0.28.1 (async HTTP with retry support)
+- solana 0.36.6 (Solana RPC client)
+- anchorpy 0.21.0 (Anchor program interaction)
+- prometheus-client 0.23.1 (metrics collection)
+- React 19.0.0 (UI framework)
+- shadcn/ui (component library)
+- Tailwind CSS (styling)
+- Recharts (data visualization)
+- Framer Motion (animations)
+- Lucide React (icons)
+
+**Design Patterns:**
+- Event-driven architecture (in-memory event bus with pub/sub)
+- Repository pattern (database abstraction layer)
+- Service-oriented architecture (data-service, arb-engine, risk-service, etc.)
+- Singleton pattern (global connector instances)
+- Observer pattern (event subscriptions)
+- Strategy pattern (CEX/DEX connector interfaces)
+- Factory pattern (opportunity creation)
+
+**Architectural Components:**
+- Event Bus: In-memory pub/sub for service communication (migration path to NATS)
+- Connectors: Exchange-specific adapters (Gemini, Solana)
+- Engines: Signal detection and execution orchestration
+- Services: Risk management, inventory tracking
+- Repositories: Data persistence abstraction
+- Gateway: REST API and WebSocket server
+- Observability: Prometheus metrics, structured logging
+
+**External Services and APIs:**
+- Gemini Exchange API (REST + WebSocket L2 orderbook + private order events)
+- Helius Solana RPC/WebSocket (mainnet pool data and transaction submission)
+- MongoDB (document storage)
+- Prometheus (metrics scraping)
+</key_technical_concepts>
+
+<code_architecture>
+**Architecture Overview:**
+
+The system implements a microservices-inspired monolith with clear service boundaries:
+
+1. **Data Plane:** Gemini connector subscribes to L2 WebSocket orderbook, Solana connector polls pool state via Helius RPC. Both emit normalized events (cex.bookUpdate, dex.poolUpdate) to event bus.
+
+2. **Signal Detection:** Signal engine subscribes to market data events, computes arbitrage spreads, applies fee/slippage haircuts, checks profit thresholds, manages trading windows, and emits signal.opportunity events.
+
+3. **Execution:** Execution engine subscribes to opportunities, validates risk controls, executes dual-leg trades (CEX IOC order + DEX swap concurrently), tracks fills, calculates realized PnL, and emits trade.completed events.
+
+4. **Risk Management:** Risk service subscribes to trade completions, tracks daily PnL and trade counts, monitors staleness, triggers kill-switches on limit breaches, and emits risk.paused/resumed events.
+
+5. **Persistence:** Repositories provide async MongoDB interface for trades, opportunities, windows, and inventory snapshots.
+
+6. **API Gateway:** FastAPI server exposes REST endpoints (/v1/status, /v1/opportunities, /v1/trades, /v1/windows, /v1/controls) and WebSocket (/ws) for real-time updates. Broadcasts opportunities and trades to connected clients.
+
+7. **Observability:** Prometheus metrics track opportunities, trades, latency, PnL, staleness, and connection status. Metrics exposed at /metrics endpoint.
+
+**Data Flow:**
+CEX/DEX → Connectors → Event Bus → Signal Engine → Event Bus → Execution Engine → Event Bus → Risk Service → Event Bus → WebSocket Broadcast → UI
+
+**Directory Structure:**
+
+```
+/app/backend/
+├── .env                                    # Environment configuration (live credentials)
+├── config.py                               # Settings management with Pydantic
+├── server.py                               # FastAPI gateway (REST + WebSocket)
+├── shared/
+│   ├── types.py                           # Pydantic models for domain objects
+│   └── events.py                          # In-memory event bus implementation
+├── connectors/
+│   ├── gemini_connector.py                # Gemini CEX connector (WS L2 + REST IOC)
+│   └── solana_connector.py                # Solana DEX connector (Helius RPC + pool math)
+├── engines/
+│   ├── signal_engine.py                   # Opportunity detection and windowing
+│   └── execution_engine.py                # Dual-leg trade execution
+├── services/
+│   └── risk_service.py                    # Risk controls and kill-switches
+├── repositories/
+│   └── db.py                              # MongoDB repositories
+└── observability/
+    └── metrics.py                         # Prometheus metrics definitions
+
+/app/frontend/
+├── package.json                            # Dependencies (recharts, framer-motion added)
+└── (UI implementation pending)
+
+/app/
+├── design_guidelines.md                    # 1,199-line design system specification
+└── plan.md                                # 4-phase implementation roadmap
+```
+
+**Files Modified or Created:**
+
+1. **/app/backend/.env**
+   - Purpose: Production environment configuration
+   - Changes: Created with live Helius mainnet credentials, Gemini API keys (revoked), asset configuration
+   - Key settings: HELIUS_API_KEY, GEMINI_API_KEY/SECRET, SOLANA_CLUSTER=mainnet-beta, ASSET_LIST=SOL-USD,BTC-USD,ETH-USD
+   - Dependencies: None
+
+2. **/app/backend/config.py**
+   - Purpose: Centralized configuration management
+   - Changes: Created Settings class with Pydantic BaseSettings
+   - Key classes: Settings (loads env vars, provides typed access, parses asset list)
+   - Dependencies: pydantic-settings, os
+
+3. **/app/backend/shared/types.py**
+   - Purpose: Domain model type definitions
+   - Changes: Created Pydantic models for all domain objects
+   - Key classes: Side, VenueType, OrderStatus (enums); BookUpdate, PoolUpdate, BoundQuote, Opportunity, Trade, Window, InventorySnapshot (models)
+   - Dependencies: pydantic, enum, decimal, datetime
+
+4. **/app/backend/shared/events.py**
+   - Purpose: In-memory event bus for service communication
+   - Changes: Created EventBus with pub/sub pattern
+   - Key classes: EventBus (subscribe, publish, get_stats methods)
+   - Dependencies: asyncio, logging, collections.defaultdict
+   - Notes: Global event_bus instance; supports async handlers; tracks event counts
+
+5. **/app/backend/connectors/gemini_connector.py**
+   - Purpose: Gemini exchange integration
+   - Changes: Created connector with WebSocket L2 orderbook and REST IOC orders
+   - Key classes: GeminiAuthenticator (HMAC-SHA384 signing), GeminiConnector (WS connection, order book maintenance, order placement)
+   - Key functions: connect_public_ws (subscribes to L2), _handle_public_message (processes updates), get_best_bid_ask, check_staleness, place_ioc_order, get_order_status
+   - Dependencies: websockets, httpx, hmac, hashlib, base64, json
+   - Notes: Emits cex.bookUpdate events; maintains local order book; handles reconnection
+
+6. **/app/backend/connectors/solana_connector.py**
+   - Purpose: Solana DEX integration via Helius
+   - Changes: Created connector with RPC pool fetching and constant-product math
+   - Key classes: PoolMath (constant_product_quote for x*y=k), SolanaConnector (pool state management, quote generation, swap execution)
+   - Key functions: fetch_pool_state, subscribe_pool_updates (polling), get_bound_quote, check_staleness, execute_swap (mock for POC)
+   - Dependencies: solana, solders, httpx, asyncio
+   - Notes: Emits dex.poolUpdate events; uses polling (WS accountSubscribe planned); mock swap execution for POC
+
+7. **/app/backend/engines/signal_engine.py**
+   - Purpose: Arbitrage opportunity detection
+   - Changes: Created signal engine with windowing and PnL calculation
+   - Key classes: WindowManager (manages trading windows), SignalEngine (detects opportunities)
+   - Key functions: handle_cex_update, handle_dex_update, check_opportunities (compares prices), _evaluate_opportunity (applies fees/haircut, checks threshold)
+   - Dependencies: shared.types, shared.events, uuid, decimal
+   - Notes: Subscribes to cex.bookUpdate and dex.poolUpdate; emits signal.opportunity; tracks windows with grace period
+
+8. **/app/backend/engines/execution_engine.py**
+   - Purpose: Dual-leg arbitrage trade execution
+   - Changes: Created execution engine with concurrent leg submission
+   - Key classes: ExecutionEngine (orchestrates trades)
+   - Key functions: handle_opportunity, execute_dual_leg (submits CEX + DEX orders concurrently), calculates realized PnL
+   - Dependencies: connectors, shared.types, shared.events, uuid, asyncio
+   - Notes: Subscribes to signal.opportunity; emits trade.completed; respects OBSERVE_ONLY mode; tracks active trades
+
+9. **/app/backend/services/risk_service.py**
+   - Purpose: Risk controls and kill-switches
+   - Changes: Created risk service with daily limits and staleness monitoring
+   - Key classes: RiskService (tracks PnL, trades, pause state)
+   - Key functions: handle_trade_completed, trigger_pause, check_staleness, get_status, resume
+   - Dependencies: shared.types, shared.events, decimal, datetime
+   - Notes: Subscribes to trade.completed; emits risk.paused/resumed; daily reset at midnight; staleness threshold 10s
+
+10. **/app/backend/repositories/db.py**
+    - Purpose: MongoDB data persistence
+    - Changes: Created repository pattern with async Motor driver
+    - Key classes: DatabaseManager (connection), TradeRepository, OpportunityRepository, WindowRepository, InventoryRepository
+    - Key functions: connect, close, insert, find_by_id, find_recent, find_by_asset, update
+    - Dependencies: motor.motor_asyncio, shared.types
+    - Notes: Global instances initialized in server startup; uses async/await throughout
+
+11. **/app/backend/observability/metrics.py**
+    - Purpose: Prometheus metrics definitions
+    - Changes: Created metrics registry with key observability metrics
+    - Key metrics: opportunities_total, trades_total, trade_pnl_usd, trade_latency_seconds, ws_staleness_seconds, risk_paused, daily_pnl_usd, connection_status
+    - Dependencies: prometheus_client
+    - Notes: Separate registry; get_metrics() returns Prometheus format
+
+12. **/app/backend/server.py**
+    - Purpose: FastAPI gateway with REST and WebSocket
+    - Changes: Created complete API server with lifespan management
+    - Key endpoints: GET /v1/status, /v1/opportunities, /v1/trades, /v1/windows; POST /v1/controls/pause, /v1/controls/resume; GET /metrics; WebSocket /ws
+    - Key functions: lifespan (startup/shutdown), monitor_system_status (background task), broadcast_to_clients, broadcast_opportunity, broadcast_trade
+    - Dependencies: FastAPI, all engines/services/repositories
+    - Notes: CORS enabled; initializes repositories; starts connector tasks; subscribes to events for broadcasts; persists trades on completion
+
+13. **/app/backend/requirements.txt**
+    - Purpose: Python dependencies
+    - Changes: Updated with pip freeze after installing websockets, aiohttp, prometheus-client, solana, anchorpy
+    - Dependencies: 27 packages including fastapi, uvicorn, motor, websockets, aiohttp, solana, anchorpy, prometheus-client, httpx, pydantic
+
+14. **/app/frontend/package.json**
+    - Purpose: Frontend dependencies
+    - Changes: Added recharts and framer-motion via yarn
+    - Dependencies: recharts (for sparklines/charts), framer-motion (for animations)
+
+15. **/app/design_guidelines.md**
+    - Purpose: Complete design system specification
+    - Changes: Created 1,199-line document with institutional design system
+    - Content: Color palette (dark backgrounds + lime accent), typography (Inter + JetBrains Mono), component specs (buttons, tables, cards), 8 screen layouts, accessibility guidelines, motion timing, CSS variables
+    - Notes: Fortune 500-quality institutional design; no gradients; lime used sparingly
+
+16. **/app/plan.md**
+    - Purpose: Strategic implementation roadmap
+    - Changes: Created 4-phase plan (POC → V1 → Features → Production)
+    - Content: Phase definitions, SLOs, architecture decisions, NY-compliant CEX stack, settlement rails, infrastructure choices, testing strategy, acceptance criteria
+    - Notes: MongoDB/in-memory bus for POC with Postgres/NATS migration paths
+</code_architecture>
+
+<pending_tasks>
+**Frontend UI Implementation (Critical):**
+1. Apply design system tokens to index.css and tailwind.config.js
+2. Build layout component with top bar, left sidebar, main content area
+3. Implement Overview screen with KPI cards (Net PnL, Capture Rate, Latency, Active Windows) + sparklines
+4. Implement Opportunities screen with live table, filters, slide-over details
+5. Implement Execution Monitor screen with dual-leg timeline visualization
+6. Implement Trades screen with ledger table and CSV export
+7. Implement Inventory & Rebalance screen with venue cards and drift monitoring
+8. Implement Risk & Limits screen with sliders, caps, and audit trail
+9. Implement Reports screen with weekly/TOD profiles
+10. Implement Settings screen with masked keys, endpoints, feature flags
+11. Wire WebSocket connection from UI to gateway for real-time updates
+12. Implement status indicators with pulse animations (lime=healthy, amber=degraded, red=down)
+13. Implement OBSERVE-ONLY toggle and pause/resume controls
+14. Implement staleness kill-switch banner alerts
+
+**Backend Enhancements:**
+15. Replace mock Solana swap execution with actual transaction building and submission
+16. Implement actual Solana pool account parsing (currently returns mock data)
+17. Add WebSocket accountSubscribe for real-time pool updates (currently polling)
+18. Implement CLMM (Concentrated Liquidity Market Maker) pool math for Whirlpool/Orca
+19. Add Jupiter aggregator fallback integration
+20. Implement dynamic priority fee calculation (percentile-of-last-N)
+21. Add Coinbase Advanced Trade connector (when proper API keys obtained)
+22. Implement inventory service with balance tracking and rebalance planner
+23. Implement scheduler service for time-of-day window management
+24. Implement report service for analytics and TOD profiling
+25. Add prediction error gate (|realized−predicted| > E% → OBSERVE-ONLY)
+26. Add anomaly detection (price jump > Xσ in Y seconds → pause)
+27. Implement multi-source trade verification (order status → balances → recent trades)
+28. Add partial fill hedge logic
+29. Implement per-asset risk capsules with configurable parameters
+
+**Testing:**
+30. Create unit tests for pool math, PnL calculation, sizing logic
+31. Create integration tests for connectors with mock data
+32. Create end-to-end tests with testnet/devnet
+33. Create load tests to verify latency SLOs (p50 ≤ 700ms, p95 ≤ 1.5s)
+34. Create chaos tests (drop WS, delay RPC, random tx fails)
+35. Implement replay/backtest with recorded ticks
+
+**Observability:**
+36. Create Grafana dashboard JSON files
+37. Implement OTEL structured logging with correlation IDs
+38. Add Loki log aggregation (optional)
+39. Implement ClickHouse for high-volume tick storage (optional)
+
+**Infrastructure:**
+40. Create Dockerfiles for each service
+41. Create Helm chart with HPA, PodDisruptionBudgets, resource limits
+42. Create Terraform modules for VPC, EKS, RDS, Elasticache, NATS/Kafka
+43. Implement secret rotation via Vault/Secrets Manager
+44. Set up CI/CD pipeline with GitHub Actions
+45. Implement pre-commit hooks (ruff, black, mypy, gitleaks)
+
+**Documentation:**
+46. Create API documentation (OpenAPI/Swagger)
+47. Create runbooks for kill-switch incidents, rebalancing, secret rotation
+48. Create incident response playbooks
+49. Document ADRs (Architecture Decision Records)
+
+**Configuration:**
+50. Create per-asset config files with thresholds, sizing, risk parameters
+51. Implement config versioning and staged updates
+52. Add feature flag management system
+
+**Fresh API Keys Required:**
+53. Obtain fresh Gemini API keys (provided keys marked as revoked)
+54. Obtain Coinbase Advanced Trade API keys (CDP keys provided, not Advanced Trade)
+55. Obtain Solana wallet keypair for transaction signing
+56. Obtain actual Solana pool addresses for SOL/USDC, BTC/USD, ETH/USD pairs
+</pending_tasks>
+
+<current_work>
+**Backend Status - Functional but Incomplete:**
+
+**Working Features:**
+- Configuration management loads from .env with type validation
+- In-memory event bus routes messages between services
+- Gemini connector establishes WebSocket L2 connection and maintains local orderbook
+- Solana connector polls pool state via Helius RPC (mock data returned)
+- Signal engine detects opportunities by comparing CEX bid/ask vs DEX mid price
+- Signal engine applies fee haircuts (CEX 0.35%, DEX 0.30%, slippage 0.75%)
+- Signal engine checks 1.0% profit threshold before emitting opportunities
+- Execution engine receives opportunities and orchestrates dual-leg trades
+- Execution engine respects OBSERVE_ONLY mode flag
+- Execution engine places Gemini IOC orders (API calls functional)
+- Execution engine executes Solana swaps (mock implementation)
+- Execution engine calculates realized PnL and latency
+- Risk service tracks daily PnL and trade counts with midnight reset
+- Risk service triggers kill-switch on daily loss limit breach
+- Risk service monitors staleness with 10-second threshold
+- MongoDB repositories provide async CRUD operations
+- FastAPI server exposes REST endpoints for status, opportunities, trades, windows
+- FastAPI server provides /metrics endpoint with Prometheus format
+- WebSocket endpoint accepts connections and broadcasts events
+- System status monitor updates connection and risk metrics every 5 seconds
+- Event subscriptions wire services together (opportunities → execution → risk → persistence → broadcast)
+
+**Configuration Status:**
+- Environment variables loaded from /app/backend/.env
+- Helius mainnet RPC/WS configured with live API key
+- Gemini API configured (keys revoked, template ready)
+- Asset list: SOL-USD, BTC-USD, ETH-USD
+- Risk limits: $1000 max position, $500 daily loss limit
+- Feature flags: aggregator_fallback=true, auto_rebalance=false, priority_fee_auto=true
+- OBSERVE_ONLY mode: false (live trading enabled)
+
+**Test Coverage:**
+- No automated tests implemented
+- Manual testing not performed
+- Integration testing pending
+- Load testing pending
+- Chaos testing pending
+
+**Build and Deployment:**
+- Backend dependencies installed successfully
+- Frontend dependencies (recharts, framer-motion) installed
+- No Docker images built
+- No Helm charts created
+- No Terraform infrastructure provisioned
+- No CI/CD pipeline configured
+- Server can be started with `python server.py` but not tested
+
+**Known Limitations:**
+1. Solana connector returns mock pool data instead of parsing actual account data
+2. Solana swap execution is mocked (returns fake transaction signature)
+3. No actual Solana transaction building or signing implemented
+4. WebSocket accountSubscribe not implemented (using 2-second polling)
+5. Only constant-product (x*y=k) math implemented, CLMM pending
+6. Jupiter aggregator integration not implemented
+7. Gemini API keys are revoked (need fresh keys for live trading)
+8. No actual Solana pool addresses configured (using "mock_pool_1")
+9. Symbol mapping hardcoded (SOL-USD → solusd) instead of configurable
+10. No inventory tracking or rebalancing implemented
+11. No scheduler service for TOD window management
+12. No report service for analytics
+13. Prediction error gate not implemented
+14. Anomaly detection not implemented
+15. Multi-source trade verification not implemented
+16. Partial fill hedge logic not implemented
+17. No per-asset risk capsules (using global limits)
+18. Frontend UI completely unimplemented (0 screens built)
+19. No WebSocket message handling on client side
+20. No data visualization or charts implemented
+21. No authentication/authorization on API endpoints
+22. No rate limiting implemented
+23. No request validation beyond Pydantic models
+24. No error recovery or circuit breakers
+25. No graceful shutdown handling
+26. MongoDB connection not tested
+27. Event bus has no error handling for failed subscribers
+28. No correlation IDs in logs
+29. No distributed tracing
+30. No alerting configured
+
+**Known Issues:**
+1. Gemini connector may fail on actual connection due to revoked keys
+2. Solana connector will not return real pool data
+3. Trades will not execute on-chain (mock signatures returned)
+4. System has never been tested end-to-end
+5. Latency SLOs cannot be verified without real execution
+6. Database writes not tested (may fail on actual MongoDB connection)
+7. WebSocket broadcasts not tested with real clients
+8. Metrics collection not verified
+9. Risk service staleness checks not tested with real data gaps
+10. Window management not tested with actual opportunity streams
+
+**Dependencies Status:**
+- Backend: All Python packages installed successfully (27 packages)
+- Frontend: recharts and framer-motion added, but UI not built
+- Database: MongoDB connection configured but not tested
+- External APIs: Helius key valid, Gemini keys revoked, no Solana wallet
+</current_work>
+
+<optional_next_step>
+**Immediate Priority: Complete Frontend UI Implementation**
+
+The backend infrastructure is substantially complete (though untested and with mock implementations). The critical blocker for end-to-end functionality is the missing frontend. The next logical steps are:
+
+1. **Apply Design System (30 minutes):**
+   - Update /app/frontend/src/index.css with CSS variables from design_guidelines.md
+   - Configure tailwind.config.js with custom colors, fonts, spacing
+   - Import Inter and JetBrains Mono fonts
+
+2. **Build Layout Foundation (1 hour):**
+   - Create Layout component with top bar, left sidebar, main content area
+   - Implement navigation with React Router
+   - Add status pills for CEX/DEX connections
+   - Add OBSERVE-ONLY toggle and pause/resume buttons
+
+3. **Implement Overview Screen (2 hours):**
+   - Create KPI cards component with sparklines using Recharts
+   - Wire WebSocket connection to receive real-time updates
+   - Display Net PnL, Capture Rate, Latency, Active Windows
+   - Add live status card with venue connections
+
+4. **Implement Opportunities Screen (2 hours):**
+   - Create opportunities table with live updates
+   - Add filters for asset, venue, threshold
+   - Implement slide-over detail panel
+   - Show predicted PnL and execution size
+
+5. **Implement Trades Screen (1 hour):**
+   - Create trades ledger table
+   - Add CSV export functionality
+   - Display realized PnL and latency per trade
+   - Link to window analysis
+
+6. **Test End-to-End (2 hours):**
+   - Start backend server
+   - Start frontend dev server
+   - Verify WebSocket connection
+   - Verify real-time updates flow from connectors → signal → execution → UI
+   - Test pause/resume controls
+   - Test staleness kill-switch
+
+**Alternative Priority: Obtain Fresh API Keys and Test Backend**
+
+If frontend development is blocked, the alternative is to validate backend functionality:
+
+1. Obtain fresh Gemini sandbox API keys
+2. Obtain Solana devnet wallet keypair
+3. Configure actual Solana devnet pool addresses
+4. Start backend server and verify:
+   - Gemini WebSocket connection establishes
+   - Order book updates received
+   - Solana pool polling works
+   - Opportunities detected
+   - Trades attempted (will still be mock on Solana side)
+5. Fix any connection/authentication issues
+6. Verify metrics endpoint returns data
+7. Test MongoDB persistence
+
+Both paths are critical, but frontend is higher priority since it's the primary user interface and demonstrates system functionality visually.
+</optional_next_step>
