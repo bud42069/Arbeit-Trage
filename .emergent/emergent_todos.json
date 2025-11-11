@@ -5,11 +5,11 @@
   },
   {
     "content": "Build Coinbase Advanced connector with CDP JWT auth + WS L2 orderbook + REST IOC orders",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Apply design system (dark + lime tokens) to frontend index.css and tailwind.config.js",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Build UI Layout: top bar with status pills + left sidebar navigation + main content area",
