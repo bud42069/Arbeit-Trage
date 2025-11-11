@@ -72,12 +72,13 @@ class SolanaConnector:
                 logger.warning(f"Pool {pool_address} not found")
                 return None
             
-            # For this POC, return mock pool data
+            # For this POC, return mock pool data with artificial spread for testing
+            # Mock price set 2% higher than typical market to trigger opportunities
             # In production, parse actual pool account data
             return {
                 "address": pool_address,
                 "token_a_reserve": Decimal("1000000"),  # Mock: 1M USDC
-                "token_b_reserve": Decimal("5000"),     # Mock: 5K SOL
+                "token_b_reserve": Decimal("4900"),     # Mock: 4.9K SOL (creates ~2% spread)
                 "fee_bps": 30,
                 "last_update": datetime.utcnow()
             }
