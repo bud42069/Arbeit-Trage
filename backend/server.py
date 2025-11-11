@@ -181,6 +181,52 @@ async def get_windows(asset: str, limit: int = 50) -> List[dict]:
     return [w.model_dump(mode="json") for w in windows]
 
 
+@app.post("/v1/test/inject-opportunity")
+async def inject_test_opportunity(
+    asset: str = "SOL-USD",
+    direction: str = "cex_to_dex",
+    spread_pct: float = 2.5
+):
+    """
+    TEST ENDPOINT: Inject synthetic opportunity to demonstrate pipeline.
+    
+    This bypasses real market data detection and creates a fake arbitrage
+    opportunity to test signal → execution → UI flow.
+    """
+    from shared.types import Opportunity
+    from decimal import Decimal
+    from datetime import datetime
+    import uuid
+    
+    # Create synthetic opportunity
+    opportunity = Opportunity(
+        id=str(uuid.uuid4()),
+        asset=asset,
+        direction=direction,
+        cex_price=Decimal("210.50") if direction == "cex_to_dex" else Decimal("215.00"),
+        dex_price=Decimal("215.00") if direction == "cex_to_dex" else Decimal("210.50"),
+        spread_pct=Decimal(str(spread_pct)),
+        predicted_pnl_pct=Decimal(str(spread_pct - 1.4)),  # After 1.4% costs
+        size=Decimal("100"),
+        timestamp=datetime.utcnow(),
+        window_id=str(uuid.uuid4())
+    )
+    
+    # Emit to event bus (triggers execution + UI broadcast)
+    await event_bus.publish("signal.opportunity", opportunity)
+    
+    # Also persist directly
+    if opportunity_repo:
+        await opportunity_repo.insert(opportunity)
+    
+    return {
+        "status": "injected",
+        "opportunity": opportunity.model_dump(mode="json"),
+        "note": "Synthetic opportunity created. Check /v1/opportunities and watch UI."
+    }
+
+
+
 class ControlAction(BaseModel):
     action: str
     reason: Optional[str] = None
