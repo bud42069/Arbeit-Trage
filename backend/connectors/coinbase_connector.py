@@ -322,18 +322,18 @@ class CoinbaseConnector:
 coinbase_connector = None
 
 def init_coinbase_connector():
-    """Initialize Coinbase connector if enabled."""
+    """Initialize Coinbase connector if enabled. Returns connector instance or None."""
     from config import settings
     
-    global coinbase_connector
-    
     if settings.coinbase_adv_enabled and settings.coinbase_key_name and settings.coinbase_private_key:
-        coinbase_connector = CoinbaseConnector(
+        connector = CoinbaseConnector(
             key_name=settings.coinbase_key_name,
             private_key=settings.coinbase_private_key,
             base_url=settings.coinbase_adv_base_url,
             ws_url=settings.coinbase_adv_ws_url
         )
         logger.info("Coinbase connector initialized")
+        return connector
     else:
         logger.info("Coinbase connector disabled")
+        return None
