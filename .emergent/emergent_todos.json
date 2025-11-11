@@ -1,26 +1,26 @@
 [
   {
-    "content": "Wire WebSocket connection in UI to receive opportunities and trades from gateway",
-    "status": "completed"
+    "content": "Fix status pill reporting to show correct Gemini/Solana connection states",
+    "status": "in_progress"
   },
   {
-    "content": "Find and configure real Solana pool addresses (Orca/Raydium SOL/USDC)",
-    "status": "completed"
+    "content": "Debug signal engine real detection (CEX/DEX price comparison logic)",
+    "status": "pending"
   },
   {
-    "content": "Test Coinbase Advanced connector WebSocket + REST API connection",
-    "status": "completed"
+    "content": "Enable WebSocket live updates (fix connection establishment)",
+    "status": "pending"
   },
   {
-    "content": "Enable Solana DEX connector with real pools and test data flow",
-    "status": "completed"
+    "content": "Parse real Solana pool data (replace mock implementation)",
+    "status": "pending"
   },
   {
-    "content": "Verify signal engine detects real arbitrage opportunities with live data",
-    "status": "completed"
+    "content": "Sync README to GitHub repository",
+    "status": "pending"
   },
   {
-    "content": "Test end-to-end flow: CEX orderbook → DEX pools → signals → execution → UI",
-    "status": "completed"
+    "content": "Test end-to-end with all fixes applied",
+    "status": "pending"
   }
 ]
