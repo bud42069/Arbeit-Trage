@@ -51,10 +51,14 @@ async def lifespan(app: FastAPI):
     
     # Add Coinbase connector task if enabled
     if coinbase_connector:
+        logger.info("Starting Coinbase Advanced connector tasks...")
         tasks.append(asyncio.create_task(coinbase_connector.connect_public_ws()))
         tasks.append(asyncio.create_task(coinbase_connector.subscribe_orderbook("SOL-USD")))
         tasks.append(asyncio.create_task(coinbase_connector.subscribe_orderbook("BTC-USD")))
         tasks.append(asyncio.create_task(coinbase_connector.subscribe_orderbook("ETH-USD")))
+        logger.info("Coinbase tasks added")
+    else:
+        logger.info("Coinbase connector disabled or not initialized")
     
     logger.info("Application started")
     
