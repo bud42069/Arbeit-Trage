@@ -36,10 +36,12 @@ coinbase_connector = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan manager."""
+    global coinbase_connector
+    
     logger.info("Starting arbitrage application...")
     
     # Initialize Coinbase connector
-    init_coinbase_connector()
+    coinbase_connector = init_coinbase_connector()
     
     # Initialize database
     await init_repositories()
