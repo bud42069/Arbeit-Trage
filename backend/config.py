@@ -26,6 +26,10 @@ class Settings(BaseSettings):
     
     # Coinbase Advanced
     coinbase_adv_enabled: bool = False
+    coinbase_adv_base_url: str = "https://api.coinbase.com"
+    coinbase_adv_ws_url: str = "wss://advanced-trade-ws.coinbase.com"
+    coinbase_key_name: Optional[str] = None
+    coinbase_private_key: Optional[str] = None
     
     # Assets
     primary_symbol: str = "SOL-USD"
