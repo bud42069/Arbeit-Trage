@@ -112,6 +112,12 @@ class WindowRepository:
         cursor = self.collection.find({"asset": asset}).sort("start_ts", -1).limit(limit)
         docs = await cursor.to_list(length=limit)
         return [Window(**doc) for doc in docs]
+    
+    async def find_recent(self, limit: int = 50) -> List[Window]:
+        """Find recent windows."""
+        cursor = self.collection.find().sort("start_ts", -1).limit(limit)
+        docs = await cursor.to_list(length=limit)
+        return [Window(**doc) for doc in docs]
 
 
 class InventoryRepository:
