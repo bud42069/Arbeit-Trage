@@ -59,7 +59,17 @@ class SignalEngine:
     async def handle_cex_update(self, book: BookUpdate):
         """Handle CEX order book update."""
         self.cex_books[book.pair] = book
-        await self.check_opportunities(book.pair)
+        # Normalize pair name for opportunity checking
+        # Convert "solusd" → "SOL-USD"
+        if book.pair == "solusd":
+            normalized = "SOL-USD"
+        elif book.pair == "btcusd":
+            normalized = "BTC-USD"
+        elif book.pair == "ethusd":
+            normalized = "ETH-USD"
+        else:
+            normalized = book.pair.upper()
+        await self.check_opportunities(normalized)
     
     async def handle_dex_update(self, pool: PoolUpdate):
         """Handle DEX pool update."""
