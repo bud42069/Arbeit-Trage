@@ -1,26 +1,22 @@
 [
   {
-    "content": "Fix status pill reporting to show correct Gemini/Solana connection states",
-    "status": "completed"
+    "content": "Implement real Solana Whirlpool account parsing to replace mock $204 price",
+    "status": "in_progress"
   },
   {
-    "content": "Debug signal engine real detection (CEX/DEX price comparison logic)",
-    "status": "completed"
+    "content": "Add unit tests for pool math, PnL calculation, and signal detection",
+    "status": "pending"
   },
   {
-    "content": "Enable WebSocket live updates (fix connection establishment)",
-    "status": "completed"
+    "content": "Create operator runbook (startup, monitoring, troubleshooting, emergency procedures)",
+    "status": "pending"
   },
   {
-    "content": "Parse real Solana pool data (replace mock implementation)",
-    "status": "completed"
+    "content": "Test execution engine with small live trades ($10-50) in OBSERVE_ONLY mode",
+    "status": "pending"
   },
   {
-    "content": "Sync README to GitHub repository",
-    "status": "completed"
-  },
-  {
-    "content": "Test end-to-end with all fixes applied",
-    "status": "completed"
+    "content": "Verify realistic spreads after real Solana parsing",
+    "status": "pending"
   }
 ]
