@@ -175,12 +175,15 @@ async def get_trades(
 
 
 @app.get("/v1/windows")
-async def get_windows(asset: str, limit: int = 50) -> List[dict]:
-    """Get trading windows for asset."""
+async def get_windows(asset: Optional[str] = None, limit: int = 50) -> List[dict]:
+    """Get recent trading windows."""
     if not window_repo:
         raise HTTPException(status_code=503, detail="Database not initialized")
     
-    windows = await window_repo.find_by_asset(asset, limit=limit)
+    if asset:
+        windows = await window_repo.find_by_asset(asset, limit=limit)
+    else:
+        windows = await window_repo.find_recent(limit=limit)
     return [w.model_dump(mode="json") for w in windows]
 
 
