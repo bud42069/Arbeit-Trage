@@ -61,12 +61,13 @@ class SignalEngine:
         logger.info(f"SignalEngine: Received CEX update for {book.pair}")
         self.cex_books[book.pair] = book
         # Normalize pair name for opportunity checking
-        # Convert "solusd" → "SOL-USD"
-        if book.pair == "solusd":
+        # Gemini sends uppercase: "SOLUSD", "BTCUSD", "ETHUSD"
+        pair_lower = book.pair.lower()
+        if pair_lower == "solusd":
             normalized = "SOL-USD"
-        elif book.pair == "btcusd":
+        elif pair_lower == "btcusd":
             normalized = "BTC-USD"
-        elif book.pair == "ethusd":
+        elif pair_lower == "ethusd":
             normalized = "ETH-USD"
         else:
             normalized = book.pair.upper()
