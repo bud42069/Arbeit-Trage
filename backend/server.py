@@ -89,6 +89,8 @@ async def monitor_system_status():
             # Update connection status
             connection_status.labels(venue="gemini").set(1 if gemini_connector.connected else 0)
             connection_status.labels(venue="solana").set(1 if solana_connector.connected else 0)
+            if coinbase_connector:
+                connection_status.labels(venue="coinbase").set(1 if (coinbase_connector.ws and not coinbase_connector.ws.closed) else 0)
             
             # Update risk metrics
             risk_status = risk_service.get_status()
