@@ -9,11 +9,11 @@
   },
   {
     "content": "Enable WebSocket live updates (fix connection establishment)",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Parse real Solana pool data (replace mock implementation)",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Sync README to GitHub repository",
