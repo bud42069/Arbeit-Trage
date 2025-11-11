@@ -13,7 +13,7 @@ from shared.types import Trade, Opportunity
 from shared.events import event_bus
 from repositories.db import init_repositories, trade_repo, opportunity_repo, window_repo
 from connectors.gemini_connector import gemini_connector
-from connectors.coinbase_connector import init_coinbase_connector, coinbase_connector
+from connectors.coinbase_connector import init_coinbase_connector
 from connectors.solana_connector import solana_connector
 from engines.signal_engine import signal_engine
 from engines.execution_engine import execution_engine
@@ -28,6 +28,9 @@ logger = logging.getLogger(__name__)
 
 # WebSocket connections
 active_connections: List[WebSocket] = []
+
+# Global reference for Coinbase connector
+coinbase_connector = None
 
 
 @asynccontextmanager
