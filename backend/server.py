@@ -309,6 +309,11 @@ async def broadcast_opportunity(opp: Opportunity):
         "type": "opportunity",
         "data": opp.model_dump(mode="json")
     })
+    
+    # Also persist opportunity
+    if db_module.opportunity_repo:
+        await db_module.opportunity_repo.insert(opp)
+        logger.info(f"Opportunity persisted: {opp.asset} {opp.direction} {opp.predicted_pnl_pct}%")
 
 
 async def broadcast_trade(trade: Trade):
