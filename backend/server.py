@@ -35,6 +35,9 @@ async def lifespan(app: FastAPI):
     """Application lifespan manager."""
     logger.info("Starting arbitrage application...")
     
+    # Initialize Coinbase connector
+    init_coinbase_connector()
+    
     # Initialize database
     await init_repositories()
     
@@ -44,6 +47,13 @@ async def lifespan(app: FastAPI):
         asyncio.create_task(solana_connector.subscribe_pool_updates(["mock_pool_1"])),
         asyncio.create_task(monitor_system_status())
     ]
+    
+    # Add Coinbase connector task if enabled
+    if coinbase_connector:
+        tasks.append(asyncio.create_task(coinbase_connector.connect_public_ws()))
+        tasks.append(asyncio.create_task(coinbase_connector.subscribe_orderbook("SOL-USD")))
+        tasks.append(asyncio.create_task(coinbase_connector.subscribe_orderbook("BTC-USD")))
+        tasks.append(asyncio.create_task(coinbase_connector.subscribe_orderbook("ETH-USD")))
     
     logger.info("Application started")
     
