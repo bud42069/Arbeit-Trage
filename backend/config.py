@@ -16,6 +16,11 @@ class Settings(BaseSettings):
     wsol_mint: str = "So11111111111111111111111111111111111111112"
     usdc_mint: str = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"
     
+    # Solana DEX Pools
+    orca_sol_usdc_pool: Optional[str] = None
+    raydium_sol_usdc_pool: Optional[str] = None
+    whirlpool_program: Optional[str] = None
+    
     # Gemini
     gemini_enabled: bool = True
     gemini_base_url: str = "https://api.gemini.com"
