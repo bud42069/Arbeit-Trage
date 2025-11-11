@@ -5,15 +5,15 @@
   },
   {
     "content": "Find and configure real Solana pool addresses (Orca/Raydium SOL/USDC)",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Test Coinbase Advanced connector WebSocket + REST API connection",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Enable Solana DEX connector with real pools and test data flow",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Verify signal engine detects real arbitrage opportunities with live data",
