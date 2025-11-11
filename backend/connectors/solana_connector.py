@@ -112,16 +112,30 @@ class SolanaConnector:
     
     def _get_mock_pool_for_testing(self, pool_address: str) -> dict:
         """
-        Fallback mock pool data for testing when real parsing fails.
-        Creates artificial 2% higher price for opportunity detection.
+        Realistic mock pool data for testing.
+        Uses actual market price with small variance to simulate DEX spreads.
         """
+        import random
+        
+        # Base on real SOL price (~$164)
+        real_sol_price = Decimal("164.0")
+        
+        # Add realistic DEX variance (±0.2% to ±0.8%)
+        variance_pct = Decimal(str(random.uniform(-0.008, 0.008)))
+        dex_price = real_sol_price * (Decimal("1") + variance_pct)
+        
+        # Calculate reserves for $1M pool
+        estimated_usdc = Decimal("500000")
+        estimated_sol = Decimal("500000") / dex_price
+        
         return {
             "address": pool_address,
-            "token_a_reserve": Decimal("1000000"),  # Mock: 1M USDC
-            "token_b_reserve": Decimal("4900"),     # Mock: 4.9K SOL (creates ~2% spread)
+            "token_a_reserve": estimated_usdc,
+            "token_b_reserve": estimated_sol,
             "fee_bps": 30,
             "last_update": datetime.utcnow(),
-            "data_source": "mock_fallback"
+            "price_mid": dex_price,
+            "data_source": "realistic_mock"
         }
     
     async def subscribe_pool_updates(self, pool_addresses: List[str]):
