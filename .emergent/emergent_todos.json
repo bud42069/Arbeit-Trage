@@ -17,10 +17,10 @@
   },
   {
     "content": "Verify signal engine detects real arbitrage opportunities with live data",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Test end-to-end flow: CEX orderbook → DEX pools → signals → execution → UI",
-    "status": "pending"
+    "status": "completed"
   }
 ]
