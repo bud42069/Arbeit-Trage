@@ -1,11 +1,11 @@
 [
   {
     "content": "Fix status pill reporting to show correct Gemini/Solana connection states",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Debug signal engine real detection (CEX/DEX price comparison logic)",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Enable WebSocket live updates (fix connection establishment)",
