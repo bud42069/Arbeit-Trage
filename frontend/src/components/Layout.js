@@ -27,12 +27,16 @@ export const Layout = ({ children }) => {
         const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/status`);
         const data = await response.json();
         
+        // Parse connections object correctly
+        const connections = data.connections || {};
+        const risk = data.risk || {};
+        
         setStatus({
-          gemini: data.gemini?.connected ? 'healthy' : 'down',
-          coinbase: data.coinbase?.connected ? 'healthy' : 'degraded',
-          solana: data.solana?.connected ? 'healthy' : 'down',
-          observeOnly: data.observe_only || false,
-          isPaused: data.risk_paused || false
+          gemini: connections.gemini ? 'healthy' : 'down',
+          coinbase: connections.coinbase ? 'healthy' : 'degraded',
+          solana: connections.solana ? 'healthy' : 'down',
+          observeOnly: risk.observe_only || false,
+          isPaused: risk.is_paused || false
         });
       } catch (error) {
         console.error('Failed to fetch status:', error);
