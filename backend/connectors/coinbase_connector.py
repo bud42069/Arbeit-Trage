@@ -31,9 +31,10 @@ class CoinbaseAuthenticator:
     
     def __init__(self, key_name: str, private_key_pem: str):
         self.key_name = key_name
-        # Parse the PEM private key
+        # Parse the PEM private key (handle escaped newlines from .env)
+        private_key_cleaned = private_key_pem.replace('\\n', '\n')
         self.private_key = serialization.load_pem_private_key(
-            private_key_pem.encode(),
+            private_key_cleaned.encode(),
             password=None
         )
     
