@@ -91,20 +91,29 @@ class SolanaConnector:
                 logger.warning(f"Account data too short ({len(account_data)} bytes), using fallback")
                 return self._get_mock_pool_for_testing(pool_address)
             
-            # Whirlpool account has 8-byte Anchor discriminator first
-            # Then: bump(1) + tickSpacing(4) + tickCurrentIndex(4) + padding
-            # sqrtPrice (u128) starts at byte 24 (8 + 1 + 4 + 4 + 7 padding for alignment)
-            sqrt_price_bytes = account_data[24:40]  # 16 bytes for u128
+            # Exact Whirlpool account layout (from orca-so/whirlpools source):
+            # Offset 0-7: Anchor discriminator (8 bytes)
+            # Offset 8-39: whirlpools_config Pubkey (32 bytes)
+            # Offset 40: whirlpool_bump u8 (1 byte)
+            # Offset 41-42: tick_spacing u16 (2 bytes)
+            # Offset 43-44: fee_tier_index_seed [u8; 2] (2 bytes)
+            # Offset 45-46: fee_rate u16 (2 bytes)
+            # Offset 47-48: protocol_fee_rate u16 (2 bytes)
+            # Offset 49-64: liquidity u128 (16 bytes)
+            # Offset 65-80: sqrt_price u128 (16 bytes) <- KEY FIELD
+            
+            # Parse sqrtPrice (u128 little-endian at offset 65)
+            sqrt_price_bytes = account_data[65:81]  # 16 bytes for u128
             sqrt_price_raw = int.from_bytes(sqrt_price_bytes, byteorder='little')
             
-            # sqrtPrice is in Q64.64 fixed-point format
-            # Formula: actual_sqrt_price = raw_value / 2^64
-            sqrt_price_decimal = Decimal(sqrt_price_raw) / Decimal(2 ** 64)
+            # sqrtPrice is stored in Q64.64 fixed-point format
+            # This means: sqrt_price_actual = raw_value / 2^64
+            # Then: price = sqrt_price_actual^2
             
-            # Calculate price: price = (sqrtPrice)^2
+            sqrt_price_decimal = Decimal(sqrt_price_raw) / Decimal(2 ** 64)
             price_mid = sqrt_price_decimal * sqrt_price_decimal
             
-            logger.info(f"Parsed Whirlpool {pool_address}: sqrtPrice_raw={sqrt_price_raw}, price=${price_mid}")
+            logger.info(f"Whirlpool {pool_address[:8]}: raw={sqrt_price_raw}, sqrt=${sqrt_price_decimal}, price=${price_mid}")
             
             # Check if price is inverted (USDC/SOL vs SOL/USDC)
             if price_mid < Decimal("1.0"):
