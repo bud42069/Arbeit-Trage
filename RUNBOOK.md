@@ -85,7 +85,7 @@ curl -s http://localhost:8001/api/v1/status | jq
 # }
 
 # 7. Access UI
-# Visit: https://arbi-trage.preview.emergentagent.com
+# Visit: https://arbitrage-app-1.preview.emergentagent.com
 ```
 
 ### Post-Deployment Verification

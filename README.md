@@ -2,7 +2,7 @@
 
 Production-grade cross-venue spot arbitrage application with institutional operator console.
 
-**Live Demo:** https://arbi-trage.preview.emergentagent.com
+**Live Demo:** https://arbitrage-app-1.preview.emergentagent.com
 
 ![Status](https://img.shields.io/badge/status-MVP%20Demo-success)
 ![Completion](https://img.shields.io/badge/completion-85%25-yellow)
@@ -85,7 +85,7 @@ curl -X POST "http://localhost:8001/api/v1/test/inject-opportunity?spread_pct=3.
 curl -s "http://localhost:8001/api/v1/opportunities" | jq
 
 # Check UI
-# Visit https://arbi-trage.preview.emergentagent.com/opportunities
+# Visit https://arbitrage-app-1.preview.emergentagent.com/opportunities
 ```
 
 **Expected Flow:**
