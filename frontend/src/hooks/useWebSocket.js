@@ -18,11 +18,13 @@ export const useWebSocket = (url) => {
         wsRef.current.close();
       }
 
+      console.log(`[WebSocket] Attempting to connect to: ${url}`);
+      
       // Create WebSocket connection
       const ws = new WebSocket(url);
       
       ws.onopen = () => {
-        console.log('WebSocket connected');
+        console.log('[WebSocket] Connected successfully');
         setIsConnected(true);
         reconnectAttempts.current = 0;
       };
@@ -30,33 +32,35 @@ export const useWebSocket = (url) => {
       ws.onmessage = (event) => {
         try {
           const message = JSON.parse(event.data);
+          console.log('[WebSocket] Received message:', message.type);
           setLastMessage(message);
         } catch (error) {
-          console.error('Failed to parse WebSocket message:', error);
+          console.error('[WebSocket] Failed to parse message:', error);
         }
       };
 
       ws.onerror = (error) => {
-        console.error('WebSocket error:', error);
+        console.error('[WebSocket] Connection error:', error);
       };
 
-      ws.onclose = () => {
-        console.log('WebSocket disconnected');
+      ws.onclose = (event) => {
+        console.log(`[WebSocket] Disconnected - Code: ${event.code}, Reason: ${event.reason}`);
         setIsConnected(false);
         
         // Attempt reconnection with exponential backoff
         reconnectAttempts.current += 1;
         const delay = Math.min(1000 * Math.pow(2, reconnectAttempts.current), 30000);
         
+        console.log(`[WebSocket] Will reconnect in ${delay}ms (attempt ${reconnectAttempts.current})`);
+        
         reconnectTimeoutRef.current = setTimeout(() => {
-          console.log(`Reconnecting... (attempt ${reconnectAttempts.current})`);
           connect();
         }, delay);
       };
 
       wsRef.current = ws;
     } catch (error) {
-      console.error('Failed to create WebSocket connection:', error);
+      console.error('[WebSocket] Failed to create connection:', error);
     }
   }, [url]);
 
