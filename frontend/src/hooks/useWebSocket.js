@@ -93,19 +93,74 @@ export const useWebSocket = (url) => {
 };
 
 /**
- * Hook for subscribing to specific event types from WebSocket
+ * Hook for subscribing to specific event types from WebSocket with polling fallback
  */
 export const useWebSocketSubscription = (eventType, onMessage) => {
   const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-  const wsUrl = backendUrl.replace('http', 'ws') + '/api/ws';
+  const wsUrl = backendUrl.replace(/^http/, 'ws') + '/api/ws';
   
   const { lastMessage, isConnected } = useWebSocket(wsUrl);
+  const [usingFallback, setUsingFallback] = useState(false);
+  const fallbackIntervalRef = useRef(null);
 
+  // If WebSocket fails after attempts, use polling fallback
   useEffect(() => {
-    if (lastMessage && lastMessage.type === eventType && onMessage) {
+    // If not connected after 10 seconds, enable polling fallback
+    const fallbackTimer = setTimeout(() => {
+      if (!isConnected && !usingFallback) {
+        console.log('[WebSocket] Connection failed, enabling polling fallback');
+        setUsingFallback(true);
+      }
+    }, 10000);
+
+    return () => clearTimeout(fallbackTimer);
+  }, [isConnected, usingFallback]);
+
+  // Polling fallback for when WebSocket is not available
+  useEffect(() => {
+    if (usingFallback && eventType && onMessage) {
+      const pollData = async () => {
+        try {
+          let endpoint = '';
+          if (eventType === 'opportunity') {
+            endpoint = `${backendUrl}/api/v1/opportunities?limit=10`;
+          } else if (eventType === 'trade') {
+            endpoint = `${backendUrl}/api/v1/trades?limit=10`;
+          }
+          
+          if (endpoint) {
+            const response = await fetch(endpoint);
+            const data = await response.json();
+            // Simulate WebSocket message format
+            const items = data.opportunities || data.trades || [];
+            if (items.length > 0) {
+              // Only send the latest item
+              onMessage(items[0]);
+            }
+          }
+        } catch (error) {
+          console.error('[Polling Fallback] Error:', error);
+        }
+      };
+
+      // Poll every 2 seconds
+      fallbackIntervalRef.current = setInterval(pollData, 2000);
+      pollData(); // Initial call
+
+      return () => {
+        if (fallbackIntervalRef.current) {
+          clearInterval(fallbackIntervalRef.current);
+        }
+      };
+    }
+  }, [usingFallback, eventType, onMessage, backendUrl]);
+
+  // Handle WebSocket messages
+  useEffect(() => {
+    if (lastMessage && lastMessage.type === eventType && onMessage && !usingFallback) {
       onMessage(lastMessage.data);
     }
-  }, [lastMessage, eventType, onMessage]);
+  }, [lastMessage, eventType, onMessage, usingFallback]);
 
-  return { isConnected };
+  return { isConnected: isConnected || usingFallback };
 };
