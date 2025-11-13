@@ -122,10 +122,10 @@ const Opportunities = () => {
                       +{Number(opp.predicted_pnl_pct).toFixed(2)}%
                     </td>
                     <td className="px-6 py-4 text-right text-sm tabular text-secondary">
-                      ${Number(opp.size_usd || opp.size).toFixed(2)}
+                      {Number(opp.spread_pct || 0).toFixed(2)}%
                     </td>
-                    <td className="px-6 py-4 text-sm text-tertiary">
-                      {opp.window_id ? `W-${opp.window_id.slice(0, 8)}` : '-'}
+                    <td className="px-6 py-4 text-right text-sm tabular text-secondary">
+                      ${Number(opp.size_usd || opp.size).toFixed(2)}
                     </td>
                   </tr>
                 ))
