@@ -12,23 +12,53 @@ const Overview = () => {
   });
 
   useEffect(() => {
-    // Fetch KPIs from API
+    // Fetch KPIs from multiple endpoints
     const fetchKpis = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/status`);
-        const data = await response.json();
+        // Fetch status for system info
+        const statusResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/status`);
+        const statusData = await statusResponse.json();
         
-        // Generate mock sparkline data for now
-        const sparkline = Array.from({ length: 20 }, (_, i) => ({
-          value: Math.random() * 100 - 50
-        }));
+        // Fetch recent trades for PnL
+        const tradesResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/trades?limit=100`);
+        const tradesData = await tradesResponse.json();
+        
+        // Calculate metrics from trades
+        const trades = tradesData.trades || [];
+        const totalPnl = trades.reduce((sum, t) => sum + (parseFloat(t.pnl_abs) || 0), 0);
+        const avgLatency = trades.length > 0 
+          ? trades.reduce((sum, t) => sum + (parseInt(t.latency_ms) || 0), 0) / trades.length 
+          : 0;
+        
+        // Calculate p95 latency
+        const latencies = trades.map(t => parseInt(t.latency_ms) || 0).sort((a, b) => a - b);
+        const p95Index = Math.floor(latencies.length * 0.95);
+        const p95Latency = latencies[p95Index] || 0;
+        
+        // Generate PnL sparkline from recent trades
+        const recentTrades = trades.slice(0, 20).reverse();
+        let cumulativePnl = 0;
+        const sparkline = recentTrades.map(t => {
+          cumulativePnl += parseFloat(t.pnl_abs) || 0;
+          return { value: cumulativePnl };
+        });
+        
+        // Fetch opportunities for capture rate
+        const oppsResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/opportunities?limit=100`);
+        const oppsData = await oppsResponse.json();
+        const opportunities = oppsData.opportunities || [];
+        
+        // Calculate capture rate (trades / opportunities)
+        const captureRate = opportunities.length > 0 
+          ? (trades.length / opportunities.length) * 100 
+          : 0;
         
         setKpis({
-          netPnl: data.daily_pnl || 0,
-          captureRate: data.capture_rate || 0,
-          p95Latency: data.p95_latency || 0,
-          activeWindows: data.active_windows || 0,
-          pnlHistory: sparkline
+          netPnl: totalPnl,
+          captureRate: captureRate,
+          p95Latency: p95Latency,
+          activeWindows: trades.length,
+          pnlHistory: sparkline.length > 0 ? sparkline : [{ value: 0 }]
         });
       } catch (error) {
         console.error('Failed to fetch KPIs:', error);
