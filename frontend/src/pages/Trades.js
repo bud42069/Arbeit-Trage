@@ -168,7 +168,16 @@ const Trades = () => {
                     data-testid="trade-row"
                   >
                     <td className="px-6 py-4 text-sm text-tertiary mono">
-                      {new Date(trade.timestamp).toLocaleString()}
+                      {new Date(trade.timestamp).toLocaleString('en-US', { 
+                        timeZone: 'America/New_York',
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: true
+                      })} ET
                     </td>
                     <td className="px-6 py-4 text-sm font-medium text-primary">
                       {trade.asset}
