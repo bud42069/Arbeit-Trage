@@ -74,8 +74,8 @@ const Opportunities = () => {
                 <th className="text-left px-6 py-4 text-sm font-medium text-secondary">Asset</th>
                 <th className="text-left px-6 py-4 text-sm font-medium text-secondary">Direction</th>
                 <th className="text-right px-6 py-4 text-sm font-medium text-secondary">Net PnL</th>
+                <th className="text-right px-6 py-4 text-sm font-medium text-secondary">Spread</th>
                 <th className="text-right px-6 py-4 text-sm font-medium text-secondary">Size</th>
-                <th className="text-left px-6 py-4 text-sm font-medium text-secondary">Window</th>
               </tr>
             </thead>
             <tbody>
