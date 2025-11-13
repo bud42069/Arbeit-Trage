@@ -106,7 +106,7 @@ const Overview = () => {
         />
         
         <KPICard
-          title="Active Windows"
+          title="Total Trades"
           value={kpis.activeWindows}
           format="number"
           icon={Activity}
