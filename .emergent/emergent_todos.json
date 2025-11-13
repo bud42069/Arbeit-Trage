@@ -16,23 +16,19 @@
     "status": "completed"
   },
   {
-    "content": "Add unit tests for pool math (constant-product formula, price calculations)",
+    "content": "Build Execution Monitor screen with dual-leg trade visualization",
+    "status": "in_progress"
+  },
+  {
+    "content": "Build Inventory screen with CEX/DEX balance tracking",
     "status": "pending"
   },
   {
-    "content": "Add unit tests for PnL calculation (fee deductions, slippage haircut)",
+    "content": "Build Risk & Limits screen with controls and kill switches",
     "status": "pending"
   },
   {
-    "content": "Implement basic inventory tracking (venue balances monitoring)",
-    "status": "pending"
-  },
-  {
-    "content": "Build remaining UI screens: Execution Monitor, Inventory, Risk & Limits",
-    "status": "pending"
-  },
-  {
-    "content": "Set up Prometheus alerting rules (staleness, connection loss, daily loss limit)",
+    "content": "Add comprehensive testing (unit + integration tests)",
     "status": "pending"
   }
 ]
