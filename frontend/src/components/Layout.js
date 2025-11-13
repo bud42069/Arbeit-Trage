@@ -7,7 +7,9 @@ import {
   Activity,
   Circle,
   Pause,
-  Play
+  Play,
+  Wallet,
+  Shield
 } from 'lucide-react';
 
 export const Layout = ({ children }) => {
