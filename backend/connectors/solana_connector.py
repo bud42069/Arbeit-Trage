@@ -96,7 +96,7 @@ class SolanaConnector:
                 logger.warning(f"Account data too short ({len(account_data)} bytes), need at least 144, using fallback")
                 return self._get_mock_pool_for_testing(pool_address)
             
-            # Exact Whirlpool account layout (from orca-so/whirlpools source + web research 2025-01-14):
+            # Exact Whirlpool account layout (from empirical testing 2025-01-14):
             # Offset 0-7: Anchor discriminator (8 bytes)
             # Offset 8-39: whirlpools_config Pubkey (32 bytes)
             # Offset 40: whirlpool_bump u8 (1 byte)
@@ -105,11 +105,11 @@ class SolanaConnector:
             # Offset 45-46: fee_rate u16 (2 bytes)
             # Offset 47-48: protocol_fee_rate u16 (2 bytes)
             # Offset 49-64: liquidity u128 (16 bytes)
-            # Offset 128-144: sqrt_price u128 (16 bytes) <- KEY FIELD (CORRECT OFFSET)
+            # Offset 65-80: sqrt_price u128 (16 bytes) <- CORRECT OFFSET (verified via testing)
             
-            # Parse sqrtPrice (u128 little-endian at offset 128)
-            # Verified via web search: Orca Whirlpool Anchor IDL documentation
-            sqrt_price_bytes = account_data[128:144]  # 16 bytes for u128
+            # Parse sqrtPrice (u128 little-endian at offset 65)
+            # Verified via direct testing: offset 65 yields correct $145 SOL price
+            sqrt_price_bytes = account_data[65:81]  # 16 bytes for u128
             sqrt_price_raw = int.from_bytes(sqrt_price_bytes, byteorder='little')
             
             # sqrtPrice is stored in Q64.64 fixed-point format
@@ -117,24 +117,20 @@ class SolanaConnector:
             # Then: price = sqrt_price_actual^2
             # CRITICAL: Must account for token decimals
             #   - Token A (USDC): 6 decimals
-            #   - Token B (SOL/wSOL): 9 decimals
-            #   - Decimal adjustment: 10^(decimals_a - decimals_b) = 10^(6-9) = 0.001
+            #   - Token B (SOL/wSOL): 9 decimals  
+            #   - For SOL/USDC price: 10^(decimals_b - decimals_a) = 10^(9-6) = 1000
             
             sqrt_price_decimal = Decimal(sqrt_price_raw) / Decimal(2 ** 64)
             price_before_decimals = sqrt_price_decimal * sqrt_price_decimal
             
-            # Apply decimal adjustment for USDC (6) / SOL (9)
-            # This converts from USDC-per-SOL to $ per SOL accounting for decimal places
-            decimal_multiplier = Decimal(10) ** (6 - 9)  # 10^-3 = 0.001
+            # Apply decimal adjustment for SOL (9) / USDC (6)
+            # This gives us SOL price in USD
+            decimal_multiplier = Decimal(10) ** (9 - 6)  # 10^3 = 1000
             price_mid = price_before_decimals * decimal_multiplier
             
-            logger.info(f"Whirlpool {pool_address[:8]}: raw={sqrt_price_raw}, sqrt={sqrt_price_decimal:.10f}, price_before_decimals={price_before_decimals:.2f}, price_with_decimals=${price_mid:.2f}")
+            logger.info(f"Whirlpool {pool_address[:8]}: raw={sqrt_price_raw}, sqrt={sqrt_price_decimal:.10f}, price=${price_mid:.2f}")
             
-            # Check if price is inverted (USDC/SOL vs SOL/USDC)
-            if price_mid < Decimal("1.0"):
-                # This is USDC per SOL, we want SOL per USDC
-                price_mid = Decimal("1.0") / price_mid
-                logger.info(f"Inverted price to SOL/USDC: ${price_mid:.2f}")
+            # No inversion needed - price should already be SOL/USDC (~$145)
             
             # Estimate reserves for constant-product pools
             # For CLMM (concentrated liquidity), this is simplified
