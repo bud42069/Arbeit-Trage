@@ -27,11 +27,6 @@ class ExecutionEngine:
     
     async def handle_opportunity(self, opp: Opportunity):
         """Handle arbitrage opportunity."""
-        # Check if in observe-only mode
-        if settings.observe_only_mode:
-            logger.info(f"OBSERVE-ONLY: Skipping execution for {opp.id}")
-            return
-        
         # Create trade
         trade = Trade(
             trade_id=str(uuid.uuid4()),
@@ -52,8 +47,13 @@ class ExecutionEngine:
         
         self.active_trades[trade.trade_id] = trade
         
-        # Execute dual-leg
-        await self.execute_dual_leg(trade, opp)
+        # Check if in observe-only mode
+        if settings.observe_only_mode:
+            logger.info(f"OBSERVE-ONLY: Simulating execution for {opp.id}")
+            await self.simulate_dual_leg(trade, opp)
+        else:
+            # Execute dual-leg
+            await self.execute_dual_leg(trade, opp)
     
     async def execute_dual_leg(self, trade: Trade, opp: Opportunity):
         """Execute both legs of the arbitrage trade."""
