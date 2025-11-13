@@ -52,6 +52,9 @@ export const Layout = ({ children }) => {
     { name: 'Overview', path: '/overview', icon: LayoutDashboard },
     { name: 'Opportunities', path: '/opportunities', icon: TrendingUp },
     { name: 'Trades', path: '/trades', icon: FileText },
+    { name: 'Execution', path: '/execution', icon: Activity },
+    { name: 'Inventory', path: '/inventory', icon: Circle },
+    { name: 'Risk & Limits', path: '/risk', icon: Circle },
   ];
 
   const getStatusColor = (status) => {
