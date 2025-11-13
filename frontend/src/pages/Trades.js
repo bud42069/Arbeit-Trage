@@ -16,8 +16,8 @@ const Trades = () => {
       const updated = [newTrade, ...prev];
       
       // Recalculate stats
-      const totalPnl = updated.reduce((sum, t) => sum + t.pnl_usd, 0);
-      const avgLatency = updated.reduce((sum, t) => sum + t.latency_ms, 0) / updated.length;
+      const totalPnl = updated.reduce((sum, t) => sum + (parseFloat(t.pnl_abs) || 0), 0);
+      const avgLatency = updated.reduce((sum, t) => sum + (parseInt(t.latency_ms) || 0), 0) / updated.length;
       
       setStats({
         total: updated.length,
@@ -39,8 +39,8 @@ const Trades = () => {
         
         // Calculate stats
         if (data.trades && data.trades.length > 0) {
-          const totalPnl = data.trades.reduce((sum, t) => sum + t.pnl_usd, 0);
-          const avgLatency = data.trades.reduce((sum, t) => sum + t.latency_ms, 0) / data.trades.length;
+          const totalPnl = data.trades.reduce((sum, t) => sum + (parseFloat(t.pnl_abs) || 0), 0);
+          const avgLatency = data.trades.reduce((sum, t) => sum + (parseInt(t.latency_ms) || 0), 0) / data.trades.length;
           
           setStats({
             total: data.trades.length,
@@ -65,12 +65,12 @@ const Trades = () => {
       new Date(t.timestamp).toISOString(),
       t.asset,
       t.direction,
-      t.size_usd.toFixed(2),
-      t.cex_price.toFixed(6),
-      t.dex_price.toFixed(6),
-      t.pnl_usd.toFixed(2),
-      t.pnl_pct.toFixed(2),
-      t.latency_ms.toFixed(0)
+      (parseFloat(t.size_asset) * parseFloat(t.cex_price)).toFixed(2),
+      parseFloat(t.cex_price).toFixed(6),
+      parseFloat(t.dex_price).toFixed(6),
+      parseFloat(t.pnl_abs).toFixed(2),
+      parseFloat(t.pnl_pct).toFixed(2),
+      parseInt(t.latency_ms).toFixed(0)
     ]);
     
     const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
@@ -177,23 +177,23 @@ const Trades = () => {
                       {trade.direction === 'cex_to_dex' ? 'CEX → DEX' : 'DEX → CEX'}
                     </td>
                     <td className="px-6 py-4 text-right text-sm tabular text-secondary">
-                      ${trade.size_usd.toFixed(2)}
+                      ${(parseFloat(trade.size_asset) * parseFloat(trade.cex_price)).toFixed(2)}
                     </td>
                     <td className="px-6 py-4 text-right text-sm tabular text-tertiary mono">
-                      ${trade.cex_price.toFixed(6)}
+                      ${parseFloat(trade.cex_price).toFixed(6)}
                     </td>
                     <td className="px-6 py-4 text-right text-sm tabular text-tertiary mono">
-                      ${trade.dex_price.toFixed(6)}
+                      ${parseFloat(trade.dex_price).toFixed(6)}
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex flex-col items-end">
                         <span className={`text-sm font-medium tabular ${
-                          trade.pnl_usd >= 0 ? 'text-success' : 'text-danger'
+                          parseFloat(trade.pnl_abs) >= 0 ? 'text-success' : 'text-danger'
                         }`}>
-                          {trade.pnl_usd >= 0 ? '+' : ''}${trade.pnl_usd.toFixed(2)}
+                          {parseFloat(trade.pnl_abs) >= 0 ? '+' : ''}${parseFloat(trade.pnl_abs).toFixed(2)}
                         </span>
                         <span className="text-xs text-tertiary tabular">
-                          {trade.pnl_pct >= 0 ? '+' : ''}{trade.pnl_pct.toFixed(2)}%
+                          {parseFloat(trade.pnl_pct) >= 0 ? '+' : ''}{parseFloat(trade.pnl_pct).toFixed(2)}%
                         </span>
                       </div>
                     </td>
