@@ -94,7 +94,15 @@ const Opportunities = () => {
                     data-testid="opportunity-row"
                   >
                     <td className="px-6 py-4 text-sm text-tertiary mono">
-                      {new Date(opp.timestamp).toLocaleTimeString()}
+                      {new Date(opp.timestamp).toLocaleString('en-US', { 
+                        timeZone: 'America/New_York',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: true
+                      })} ET
                     </td>
                     <td className="px-6 py-4 text-sm font-medium text-primary">
                       {opp.asset}
