@@ -9,11 +9,11 @@
   },
   {
     "content": "Fix WebSocket real-time updates for live UI",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Fix status pill consistency across all UI screens (centralize state management)",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Add unit tests for pool math (constant-product formula, price calculations)",
