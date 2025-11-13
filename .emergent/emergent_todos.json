@@ -17,18 +17,18 @@
   },
   {
     "content": "Build Execution Monitor screen with dual-leg trade visualization",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Build Inventory screen with CEX/DEX balance tracking",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Build Risk & Limits screen with controls and kill switches",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Add comprehensive testing (unit + integration tests)",
-    "status": "pending"
+    "status": "in_progress"
   }
 ]
