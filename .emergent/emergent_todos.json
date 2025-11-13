@@ -8,6 +8,10 @@
     "status": "completed"
   },
   {
+    "content": "Fix WebSocket real-time updates for live UI",
+    "status": "in_progress"
+  },
+  {
     "content": "Fix status pill consistency across all UI screens (centralize state management)",
     "status": "pending"
   },
