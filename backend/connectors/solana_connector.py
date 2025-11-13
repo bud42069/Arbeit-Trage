@@ -86,9 +86,14 @@ class SolanaConnector:
             
             account_data = bytes(response.value.data)
             
+            # Log account data details for debugging
+            logger.info(f"Whirlpool account data length: {len(account_data)} bytes")
+            logger.info(f"First 32 bytes (hex): {account_data[:32].hex()}")
+            logger.info(f"Bytes 128-144 (hex): {account_data[128:144].hex()}")
+            
             # Verify sufficient data length
-            if len(account_data) < 32:
-                logger.warning(f"Account data too short ({len(account_data)} bytes), using fallback")
+            if len(account_data) < 144:
+                logger.warning(f"Account data too short ({len(account_data)} bytes), need at least 144, using fallback")
                 return self._get_mock_pool_for_testing(pool_address)
             
             # Exact Whirlpool account layout (from orca-so/whirlpools source + web research 2025-01-14):
