@@ -1,7 +1,7 @@
 [
   {
     "content": "Implement true Whirlpool sqrtPrice parsing from on-chain account data (no CoinGecko fallback)",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Fix status pill consistency across all UI screens (centralize state management)",
