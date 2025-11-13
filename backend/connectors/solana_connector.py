@@ -91,7 +91,7 @@ class SolanaConnector:
                 logger.warning(f"Account data too short ({len(account_data)} bytes), using fallback")
                 return self._get_mock_pool_for_testing(pool_address)
             
-            # Exact Whirlpool account layout (from orca-so/whirlpools source):
+            # Exact Whirlpool account layout (from orca-so/whirlpools source + web research 2025-01-14):
             # Offset 0-7: Anchor discriminator (8 bytes)
             # Offset 8-39: whirlpools_config Pubkey (32 bytes)
             # Offset 40: whirlpool_bump u8 (1 byte)
@@ -100,10 +100,11 @@ class SolanaConnector:
             # Offset 45-46: fee_rate u16 (2 bytes)
             # Offset 47-48: protocol_fee_rate u16 (2 bytes)
             # Offset 49-64: liquidity u128 (16 bytes)
-            # Offset 65-80: sqrt_price u128 (16 bytes) <- KEY FIELD
+            # Offset 128-144: sqrt_price u128 (16 bytes) <- KEY FIELD (CORRECT OFFSET)
             
-            # Parse sqrtPrice (u128 little-endian at offset 65)
-            sqrt_price_bytes = account_data[65:81]  # 16 bytes for u128
+            # Parse sqrtPrice (u128 little-endian at offset 128)
+            # Verified via web search: Orca Whirlpool Anchor IDL documentation
+            sqrt_price_bytes = account_data[128:144]  # 16 bytes for u128
             sqrt_price_raw = int.from_bytes(sqrt_price_bytes, byteorder='little')
             
             # sqrtPrice is stored in Q64.64 fixed-point format
