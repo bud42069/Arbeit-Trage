@@ -13,7 +13,7 @@
   },
   {
     "content": "Fix status pill consistency across all UI screens (centralize state management)",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Add unit tests for pool math (constant-product formula, price calculations)",
