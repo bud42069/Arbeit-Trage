@@ -113,19 +113,28 @@ class SolanaConnector:
             sqrt_price_raw = int.from_bytes(sqrt_price_bytes, byteorder='little')
             
             # sqrtPrice is stored in Q64.64 fixed-point format
-            # This means: sqrt_price_actual = raw_value / 2^64
+            # Conversion formula: sqrt_price_actual = raw_value / 2^64
             # Then: price = sqrt_price_actual^2
+            # CRITICAL: Must account for token decimals
+            #   - Token A (USDC): 6 decimals
+            #   - Token B (SOL/wSOL): 9 decimals
+            #   - Decimal adjustment: 10^(decimals_a - decimals_b) = 10^(6-9) = 0.001
             
             sqrt_price_decimal = Decimal(sqrt_price_raw) / Decimal(2 ** 64)
-            price_mid = sqrt_price_decimal * sqrt_price_decimal
+            price_before_decimals = sqrt_price_decimal * sqrt_price_decimal
             
-            logger.info(f"Whirlpool {pool_address[:8]}: raw={sqrt_price_raw}, sqrt=${sqrt_price_decimal}, price=${price_mid}")
+            # Apply decimal adjustment for USDC (6) / SOL (9)
+            # This converts from USDC-per-SOL to $ per SOL accounting for decimal places
+            decimal_multiplier = Decimal(10) ** (6 - 9)  # 10^-3 = 0.001
+            price_mid = price_before_decimals * decimal_multiplier
+            
+            logger.info(f"Whirlpool {pool_address[:8]}: raw={sqrt_price_raw}, sqrt={sqrt_price_decimal:.10f}, price_before_decimals={price_before_decimals:.2f}, price_with_decimals=${price_mid:.2f}")
             
             # Check if price is inverted (USDC/SOL vs SOL/USDC)
             if price_mid < Decimal("1.0"):
                 # This is USDC per SOL, we want SOL per USDC
                 price_mid = Decimal("1.0") / price_mid
-                logger.info(f"Inverted price to SOL/USDC: ${price_mid}")
+                logger.info(f"Inverted price to SOL/USDC: ${price_mid:.2f}")
             
             # Estimate reserves for constant-product pools
             # For CLMM (concentrated liquidity), this is simplified
