@@ -82,7 +82,11 @@ class SolanaConnector:
             
             if not response.value or not response.value.data:
                 logger.warning(f"No account data for pool {pool_address}, using fallback")
+                self.connected = False
                 return self._get_mock_pool_for_testing(pool_address)
+            
+            # Mark as connected since we successfully fetched data
+            self.connected = True
             
             account_data = bytes(response.value.data)
             
