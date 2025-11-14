@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Download, ExternalLink } from 'lucide-react';
 import { useWebSocketSubscription } from '../hooks/useWebSocket';
+import { toast } from 'sonner';
 
 const Trades = () => {
   const [trades, setTrades] = useState([]);
