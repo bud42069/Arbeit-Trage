@@ -151,7 +151,7 @@ class SolanaConnector:
             decimal_multiplier = Decimal(10) ** (9 - 6)  # 10^3 = 1000
             price_mid = price_before_decimals * decimal_multiplier
             
-            logger.info(f"Whirlpool {pool_address[:8]}: raw={sqrt_price_raw}, sqrt={sqrt_price_decimal:.10f}, price=${price_mid:.2f}")
+            logger.info(f"Whirlpool {pool_address[:8]}: sqrtPrice={sqrt_price_decimal:.10f}, price=${price_mid:.2f}")
             
             # No inversion needed - price should already be SOL/USDC (~$145)
             
