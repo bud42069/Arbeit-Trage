@@ -52,12 +52,16 @@ class PoolMath:
 
 
 class SolanaConnector:
-    """Solana DEX connector using Helius."""
+    """Solana DEX connector using Helius with public RPC fallback."""
     
     def __init__(self):
         self.rpc_url = settings.helius_rpc_url
         self.ws_url = settings.helius_ws_url
+        # Public Solana RPC as fallback
+        self.fallback_rpc_url = "https://api.mainnet-beta.solana.com"
         self.client = AsyncClient(self.rpc_url)
+        self.fallback_client = AsyncClient(self.fallback_rpc_url)
+        self.using_fallback = False
         self.pools: Dict[str, Dict] = {}
         self.connected = False
         self.last_update_ts: Dict[str, datetime] = {}
