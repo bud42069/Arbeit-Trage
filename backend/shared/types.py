@@ -83,7 +83,7 @@ class Opportunity(BaseModelWithTimezone):
     window_id: Optional[str] = None
 
 
-class Trade(BaseModel):
+class Trade(BaseModelWithTimezone):
     """Executed arbitrage trade."""
     trade_id: str
     opportunity_id: str
@@ -103,7 +103,7 @@ class Trade(BaseModel):
     status: OrderStatus = OrderStatus.PENDING
 
 
-class Window(BaseModel):
+class Window(BaseModelWithTimezone):
     """Trading window for TOD analysis."""
     id: str
     asset: str
@@ -116,7 +116,7 @@ class Window(BaseModel):
     mean_net_pnl_pct: Decimal = Decimal("0")
 
 
-class InventorySnapshot(BaseModel):
+class InventorySnapshot(BaseModelWithTimezone):
     """Inventory snapshot per venue."""
     id: str
     timestamp: datetime
