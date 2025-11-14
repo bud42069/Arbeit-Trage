@@ -250,6 +250,22 @@ async def resume_trading():
     return {"status": "resumed"}
 
 
+@app.post("/api/v1/controls/observe-only")
+async def enable_observe_only():
+    """Enable observe-only mode (simulated trades)."""
+    settings.observe_only_mode = True
+    logger.info("Switched to OBSERVE ONLY mode")
+    return {"status": "observe_only", "observe_only_mode": True}
+
+
+@app.post("/api/v1/controls/live-trading")
+async def enable_live_trading():
+    """Enable live trading mode (real trades)."""
+    settings.observe_only_mode = False
+    logger.warning("⚠️ LIVE TRADING ENABLED - Real orders will be placed!")
+    return {"status": "live_trading", "observe_only_mode": False}
+
+
 @app.get("/api/metrics")
 async def metrics():
     """Prometheus metrics endpoint."""
