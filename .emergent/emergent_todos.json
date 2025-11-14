@@ -1,26 +1,26 @@
 [
   {
     "content": "Investigate Solana RPC exceptions - check error logs for specific exception details",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Test Helius RPC endpoint connectivity and API key validity",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Verify Whirlpool pool address is still valid on-chain",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Implement retry logic with exponential backoff for RPC calls",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Add fallback RPC endpoints if Helius fails",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Verify Solana connector restoration and status pill shows Connected",
-    "status": "pending"
+    "status": "completed"
   }
 ]
