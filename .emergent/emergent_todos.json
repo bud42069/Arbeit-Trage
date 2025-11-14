@@ -1,26 +1,30 @@
 [
   {
-    "content": "Investigate Solana RPC exceptions - check error logs for specific exception details",
-    "status": "completed"
+    "content": "Create backend/.env.template with all required environment variables",
+    "status": "pending"
   },
   {
-    "content": "Test Helius RPC endpoint connectivity and API key validity",
-    "status": "completed"
+    "content": "Create frontend/.env.template for frontend configuration",
+    "status": "pending"
   },
   {
-    "content": "Verify Whirlpool pool address is still valid on-chain",
-    "status": "completed"
+    "content": "Create comprehensive API documentation (docs/API.md)",
+    "status": "pending"
   },
   {
-    "content": "Implement retry logic with exponential backoff for RPC calls",
-    "status": "completed"
+    "content": "Create GitHub setup guide (docs/GITHUB_SETUP.md)",
+    "status": "pending"
   },
   {
-    "content": "Add fallback RPC endpoints if Helius fails",
-    "status": "completed"
+    "content": "Update .gitignore to exclude real .env but allow .env.template",
+    "status": "pending"
   },
   {
-    "content": "Verify Solana connector restoration and status pill shows Connected",
-    "status": "completed"
+    "content": "Update README.md with GitHub repository link and setup instructions",
+    "status": "pending"
+  },
+  {
+    "content": "Verify all documentation is complete and cross-referenced",
+    "status": "pending"
   }
 ]
