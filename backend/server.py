@@ -48,6 +48,12 @@ async def lifespan(app: FastAPI):
     # Initialize database
     await db_module.init_repositories()
     
+    # Create default admin user if no users exist
+    default_admin = await user_repo.create_default_admin()
+    if default_admin:
+        logger.warning(f"Created default admin user: {default_admin.username} / admin123")
+        logger.warning("CHANGE DEFAULT PASSWORD IMMEDIATELY!")
+    
     # Start background tasks
     tasks = [
         asyncio.create_task(gemini_connector.connect_public_ws(["solusd", "btcusd", "ethusd"])),
