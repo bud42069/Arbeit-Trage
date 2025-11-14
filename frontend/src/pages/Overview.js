@@ -25,6 +25,7 @@ const Overview = () => {
         
         // Calculate metrics from trades
         const trades = tradesData.trades || [];
+        const totalCount = tradesData.total_count || trades.length;  // Use API total_count
         const totalPnl = trades.reduce((sum, t) => sum + (parseFloat(t.pnl_abs) || 0), 0);
         const avgLatency = trades.length > 0 
           ? trades.reduce((sum, t) => sum + (parseInt(t.latency_ms) || 0), 0) / trades.length 
@@ -57,7 +58,7 @@ const Overview = () => {
           netPnl: totalPnl,
           captureRate: captureRate,
           p95Latency: p95Latency,
-          activeWindows: trades.length,
+          activeWindows: totalCount,  // Use total_count from database, not just fetched count
           pnlHistory: sparkline.length > 0 ? sparkline : [{ value: 0 }]
         });
       } catch (error) {
