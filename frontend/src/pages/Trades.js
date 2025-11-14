@@ -45,8 +45,11 @@ const Trades = () => {
           const totalPnl = data.trades.reduce((sum, t) => sum + (parseFloat(t.pnl_abs) || 0), 0);
           const avgLatency = data.trades.reduce((sum, t) => sum + (parseInt(t.latency_ms) || 0), 0) / data.trades.length;
           
+          const dbTotal = data.total_count || data.trades.length;
+          setTotalCountFromDB(dbTotal);  // Store DB total
+          
           setStats({
-            total: data.total_count || data.trades.length,  // Use total_count from API
+            total: dbTotal,  // Use total_count from API
             totalPnl,
             avgLatency
           });
