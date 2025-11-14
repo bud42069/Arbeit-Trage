@@ -1,7 +1,7 @@
 [
   {
     "content": "Create backend/.env.template with all required environment variables",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Create frontend/.env.template for frontend configuration",
