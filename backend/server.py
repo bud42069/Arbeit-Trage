@@ -268,26 +268,29 @@ async def pause_trading(
 
 
 @app.post("/api/v1/controls/resume")
-async def resume_trading():
-    """Resume trading."""
+async def resume_trading(current_user = Depends(require_operator)):
+    """Resume trading (requires operator or admin role)."""
     await risk_service.resume()
-    return {"status": "resumed"}
+    
+    logger.info(f"Trading resumed by {current_user.username}")
+    
+    return {"status": "resumed", "resumed_by": current_user.username}
 
 
 @app.post("/api/v1/controls/observe-only")
-async def enable_observe_only():
-    """Enable observe-only mode (simulated trades)."""
+async def enable_observe_only(current_user = Depends(require_operator)):
+    """Enable observe-only mode (requires operator or admin role)."""
     settings.observe_only_mode = True
-    logger.info("Switched to OBSERVE ONLY mode")
-    return {"status": "observe_only", "observe_only_mode": True}
+    logger.info(f"Switched to OBSERVE ONLY mode by {current_user.username}")
+    return {"status": "observe_only", "observe_only_mode": True, "changed_by": current_user.username}
 
 
 @app.post("/api/v1/controls/live-trading")
-async def enable_live_trading():
-    """Enable live trading mode (real trades)."""
+async def enable_live_trading(current_user = Depends(require_admin)):
+    """Enable live trading mode (requires admin role) - REAL MONEY AT RISK."""
     settings.observe_only_mode = False
-    logger.warning("⚠️ LIVE TRADING ENABLED - Real orders will be placed!")
-    return {"status": "live_trading", "observe_only_mode": False}
+    logger.warning(f"⚠️ LIVE TRADING ENABLED by {current_user.username} - Real orders will be placed!")
+    return {"status": "live_trading", "observe_only_mode": False, "enabled_by": current_user.username}
 
 
 @app.get("/api/metrics")
