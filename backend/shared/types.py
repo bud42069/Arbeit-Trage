@@ -3,7 +3,16 @@ from enum import Enum
 from decimal import Decimal
 from datetime import datetime
 from typing import Dict, List, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
+
+
+class BaseModelWithTimezone(BaseModel):
+    """Base model with proper timezone serialization."""
+    model_config = ConfigDict(
+        json_encoders={
+            datetime: lambda v: v.isoformat() if v.tzinfo else v.replace(tzinfo=None).isoformat() + 'Z'
+        }
+    )
 
 
 class Side(str, Enum):
