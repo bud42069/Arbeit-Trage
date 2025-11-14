@@ -159,7 +159,7 @@ async def get_trades(
     asset: Optional[str] = None,
     limit: int = 100
 ) -> dict:
-    """Get recent trades."""
+    """Get recent trades with total count."""
     if not db_module.trade_repo:
         raise HTTPException(status_code=503, detail="Database not initialized")
     
@@ -168,7 +168,14 @@ async def get_trades(
     else:
         trades = await db_module.trade_repo.find_recent(limit=limit)
     
-    return {"trades": [t.model_dump(mode="json") for t in trades]}
+    # Get total count from database
+    total_count = await db_module.trade_repo.collection.count_documents({})
+    
+    return {
+        "trades": [t.model_dump(mode="json") for t in trades],
+        "total_count": total_count,
+        "limit": limit
+    }
 
 
 @app.get("/api/v1/windows")
