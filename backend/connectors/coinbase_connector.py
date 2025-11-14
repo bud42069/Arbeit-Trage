@@ -195,82 +195,79 @@ class CoinbaseConnector:
         except Exception as e:
             logger.error(f"Coinbase WS error: {e}", exc_info=True)
     
-    async def _handle_l2_snapshot(self, data: dict):
+    async def _handle_l2_snapshot(self, event: dict):
         """Handle initial L2 orderbook snapshot."""
-        product_id = data.get("product_id")
+        product_id = event.get("product_id")
         if not product_id:
             return
         
-        bids = [(float(p), float(s)) for p, s in data.get("bids", [])]
-        asks = [(float(p), float(s)) for p, s in data.get("asks", [])]
+        # NEW FORMAT: updates array with side, price_level, new_quantity
+        updates = event.get("updates", [])
         
-        # Store top 10 levels
+        bids = []
+        asks = []
+        
+        for update in updates:
+            side = update.get("side")
+            price = float(update.get("price_level", 0))
+            size = float(update.get("new_quantity", 0))
+            
+            if side == "bid":
+                bids.append((price, size))
+            elif side == "offer":
+                asks.append((price, size))
+        
+        # Store top 20 levels (sorted)
         self.books[product_id] = {
-            "bids": sorted(bids, key=lambda x: x[0], reverse=True)[:10],
-            "asks": sorted(asks, key=lambda x: x[0])[:10]
+            "bids": sorted(bids, key=lambda x: x[0], reverse=True)[:20],
+            "asks": sorted(asks, key=lambda x: x[0])[:20]
         }
         
         self.last_update[product_id] = datetime.now(timezone.utc)
         
-        logger.info(f"Coinbase {product_id} snapshot: {len(bids)} bids, {len(asks)} asks")
+        logger.info(f"📸 Coinbase {product_id} snapshot: {len(bids)} bids, {len(asks)} asks")
         
         # Emit initial book event
-        book_update = BookUpdate(
-            venue="coinbase",
-            pair=product_id,
-            timestamp=self.last_update[product_id],
-            bids=self.books[product_id]["bids"],
-            asks=self.books[product_id]["asks"],
-            sequence=None
-        )
-        await event_bus.publish("cex.bookUpdate", book_update)
+        if self.books[product_id]["bids"] and self.books[product_id]["asks"]:
+            await self._emit_book_update(product_id)
     
-    async def _handle_l2_update(self, data: dict):
+    async def _handle_l2_update(self, event: dict):
         """Handle L2 orderbook updates."""
-        product_id = data.get("product_id")
+        product_id = event.get("product_id")
         if not product_id or product_id not in self.books:
             return
         
-        updates = data.get("updates", [])
-        
-        # Build bids and asks from updates
+        updates = event.get("updates", [])
         book = self.books[product_id]
         
         for update in updates:
             side = update.get("side")
-            price = float(update["price_level"])
-            size = float(update["new_quantity"])
+            price = float(update.get("price_level", 0))
+            size = float(update.get("new_quantity", 0))
             
-            if side == "BUY":
+            if side == "bid":
                 # Update bids
                 bids_dict = {p: s for p, s in book["bids"]}
                 if size == 0:
                     bids_dict.pop(price, None)
                 else:
                     bids_dict[price] = size
-                book["bids"] = sorted(bids_dict.items(), key=lambda x: x[0], reverse=True)[:10]
+                book["bids"] = sorted(bids_dict.items(), key=lambda x: x[0], reverse=True)[:20]
                 
-            elif side == "SELL":
+            elif side == "offer":
                 # Update asks
                 asks_dict = {p: s for p, s in book["asks"]}
                 if size == 0:
                     asks_dict.pop(price, None)
                 else:
                     asks_dict[price] = size
-                book["asks"] = sorted(asks_dict.items(), key=lambda x: x[0])[:10]
+                book["asks"] = sorted(asks_dict.items(), key=lambda x: x[0])[:20]
         
         self.last_update[product_id] = datetime.now(timezone.utc)
         
-        # Emit event
-        book_update = BookUpdate(
-            venue="coinbase",
-            pair=product_id,
-            timestamp=self.last_update[product_id],
-            bids=book["bids"],
-            asks=book["asks"],
-            sequence=None
-        )
-        await event_bus.publish("cex.bookUpdate", book_update)
+        # Emit book update (only if we have both bids and asks)
+        if book["bids"] and book["asks"]:
+            await self._emit_book_update(product_id)
     
     def get_best_bid_ask(self, product_id: str) -> tuple[Optional[float], Optional[float], Optional[float], Optional[float]]:
         """Get best bid/ask with sizes."""
