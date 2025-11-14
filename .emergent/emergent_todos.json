@@ -1,11 +1,11 @@
 [
   {
     "content": "Phase 5.2: Implement authentication and authorization",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Phase 5.3: Add rate limiting on API endpoints",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Phase 5.4: Set up Prometheus alerting rules",
