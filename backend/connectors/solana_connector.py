@@ -174,10 +174,8 @@ class SolanaConnector:
             
         except Exception as e:
             logger.error(f"Whirlpool parsing failed for {pool_address}: {e}", exc_info=True)
-            # Fallback to mock data on error
-            self.connected = True  # Consider connected with fallback data
-            logger.warning(f"Using mock fallback data for pool {pool_address}")
-            return self._get_mock_pool_for_testing(pool_address)
+            self.connected = False
+            raise  # Re-raise to let the caller handle it properly
     
     def _get_mock_pool_for_testing(self, pool_address: str) -> dict:
         """
