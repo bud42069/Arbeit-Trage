@@ -3,7 +3,7 @@ import asyncio
 import logging
 from contextlib import asynccontextmanager
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -198,7 +198,7 @@ async def inject_test_opportunity(
     """
     from shared.types import Opportunity
     from decimal import Decimal
-    from datetime import datetime
+    from datetime import datetime, timezone
     import uuid
     
     # Create synthetic opportunity
