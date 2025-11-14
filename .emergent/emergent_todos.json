@@ -1,50 +1,26 @@
 [
   {
-    "content": "Implement true Whirlpool sqrtPrice parsing from on-chain account data (no CoinGecko fallback)",
-    "status": "completed"
-  },
-  {
-    "content": "Test execution engine in OBSERVE_ONLY mode with real market conditions",
-    "status": "completed"
-  },
-  {
-    "content": "Fix WebSocket real-time updates for live UI",
-    "status": "completed"
-  },
-  {
-    "content": "Fix status pill consistency across all UI screens (centralize state management)",
-    "status": "completed"
-  },
-  {
-    "content": "Build Execution Monitor screen with dual-leg trade visualization",
-    "status": "completed"
-  },
-  {
-    "content": "Build Inventory screen with CEX/DEX balance tracking",
-    "status": "completed"
-  },
-  {
-    "content": "Build Risk & Limits screen with controls and kill switches",
-    "status": "completed"
-  },
-  {
-    "content": "Add comprehensive testing (unit + integration tests)",
-    "status": "completed"
-  },
-  {
-    "content": "Root cause analysis: Investigate why spreads are only 0.07-0.23%",
-    "status": "completed"
-  },
-  {
-    "content": "Deep testing: Edge cases (stale data, zero liquidity, API failures)",
+    "content": "Debug Coinbase WebSocket subscription and complete connector",
     "status": "in_progress"
   },
   {
-    "content": "Performance testing: Latency and throughput under load",
+    "content": "Test Coinbase connector with live orderbook data",
     "status": "pending"
   },
   {
-    "content": "Integration testing: End-to-end flow validation",
+    "content": "Integrate Coinbase data into signal engine for multi-venue comparison",
+    "status": "pending"
+  },
+  {
+    "content": "Document Coinbase connector setup and testing",
+    "status": "pending"
+  },
+  {
+    "content": "Production hardening: Add CI/CD pipeline basics",
+    "status": "pending"
+  },
+  {
+    "content": "Production hardening: Security controls (rate limiting, auth)",
     "status": "pending"
   }
 ]
