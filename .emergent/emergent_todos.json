@@ -33,11 +33,11 @@
   },
   {
     "content": "Root cause analysis: Investigate why spreads are only 0.07-0.23%",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Deep testing: Edge cases (stale data, zero liquidity, API failures)",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Performance testing: Latency and throughput under load",
