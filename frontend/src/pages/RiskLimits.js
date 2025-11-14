@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, AlertTriangle, Activity, DollarSign, Clock, Zap } from 'lucide-react';
+import { toast } from 'sonner';
 
 const RiskLimits = () => {
   const [riskStatus, setRiskStatus] = useState({
@@ -66,6 +67,29 @@ const RiskLimits = () => {
     }
   };
 
+  const handleModeToggle = async () => {
+    try {
+      const newMode = !riskStatus.observe_only;
+      const endpoint = newMode ? '/api/v1/controls/observe-only' : '/api/v1/controls/live-trading';
+      
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      
+      if (res.ok) {
+        setRiskStatus(prev => ({ ...prev, observe_only: newMode }));
+        toast.success(newMode ? 'Switched to OBSERVE ONLY mode' : '⚠️ LIVE TRADING ENABLED', {
+          description: newMode ? 'All trades will be simulated' : 'Real orders will be placed!',
+        });
+      } else {
+        toast.error('Failed to change mode');
+      }
+    } catch (error) {
+      toast.error('Error changing mode');
+    }
+  };
+
   const utilizationPct = ((settings.daily_loss_limit_usd - riskStatus.daily_remaining_loss_usd) / settings.daily_loss_limit_usd) * 100;
 
   return (
@@ -107,10 +131,45 @@ const RiskLimits = () => {
           data-testid="observe-only-alert"
         >
           <AlertTriangle size={20} className="text-warning mt-0.5" />
-          <div>
+          <div className="flex-1">
             <p className="text-sm font-medium text-warning">OBSERVE ONLY Mode</p>
             <p className="text-xs text-secondary mt-1">System will detect opportunities but NOT execute real trades</p>
           </div>
+          <button
+            onClick={handleModeToggle}
+            className="
+              px-3 py-1.5 rounded-md bg-success/20 border border-success/30
+              text-xs font-medium text-success
+              hover:bg-success/30
+              transition-all duration-150
+            "
+          >
+            Enable Live Trading
+          </button>
+        </div>
+      )}
+
+      {!riskStatus.observe_only && !riskStatus.is_paused && (
+        <div 
+          className="flex items-start gap-3 p-4 rounded-lg bg-success/10 border border-success/30"
+          data-testid="live-trading-alert"
+        >
+          <Zap size={20} className="text-success mt-0.5" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-success">LIVE TRADING Active</p>
+            <p className="text-xs text-secondary mt-1">System is executing real trades with real funds</p>
+          </div>
+          <button
+            onClick={handleModeToggle}
+            className="
+              px-3 py-1.5 rounded-md bg-warning/20 border border-warning/30
+              text-xs font-medium text-warning
+              hover:bg-warning/30
+              transition-all duration-150
+            "
+          >
+            Switch to Observe Only
+          </button>
         </div>
       )}
 
