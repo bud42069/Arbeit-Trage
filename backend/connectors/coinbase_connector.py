@@ -127,14 +127,16 @@ class CoinbaseConnector:
         # Generate WebSocket JWT (simpler payload without aud/uri)
         jwt_token = self.authenticator.build_jwt(for_websocket=True)
         
+        # ✅ CORRECTED FORMAT: Use "channels" (plural) as array, and include jwt in proper location
         subscribe_msg = {
             "type": "subscribe",
             "product_ids": [product_id],
-            "channel": "level2",
+            "channels": ["level2"],  # Changed from "channel" (singular) to "channels" (plural array)
             "jwt": jwt_token
         }
         
         logger.info(f"Sending subscription for {product_id} with WebSocket JWT")
+        logger.debug(f"Subscription message: {json.dumps(subscribe_msg, indent=2)}")
         await self.ws.send(json.dumps(subscribe_msg))
         self.subscribed_products.append(product_id)
         self.books[product_id] = {"bids": [], "asks": []}
@@ -154,14 +156,17 @@ class CoinbaseConnector:
                     
                     if msg_type == "snapshot":
                         await self._handle_l2_snapshot(data)
-                    elif msg_type == "update":
+                    elif msg_type == "l2update":  # Changed from "update" to "l2update"
                         await self._handle_l2_update(data)
                     elif msg_type == "subscriptions":
-                        logger.info(f"Coinbase subscription confirmed: {data}")
+                        logger.info(f"✅ Coinbase subscription confirmed: {data}")
+                    elif msg_type == "heartbeat":
+                        # Coinbase sends heartbeats - just log occasionally
+                        pass
                     elif msg_type == "error":
-                        logger.error(f"Coinbase WS error message: {data}")
+                        logger.error(f"❌ Coinbase WS error message: {data}")
                     else:
-                        logger.warning(f"Coinbase WS unknown message type: {msg_type}")
+                        logger.debug(f"Coinbase WS message type '{msg_type}': {json.dumps(data)[:200]}")
                         
                 except json.JSONDecodeError as e:
                     logger.error(f"Coinbase WS JSON decode error: {e}, message: {message[:200]}")
