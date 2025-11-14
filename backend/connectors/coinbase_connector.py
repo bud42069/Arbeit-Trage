@@ -38,19 +38,29 @@ class CoinbaseAuthenticator:
             password=None
         )
     
-    def build_jwt(self, service: str = "retail_rest_api_proxy") -> str:
+    def build_jwt(self, service: str = "retail_rest_api_proxy", for_websocket: bool = False) -> str:
         """Build JWT token for API authentication."""
-        uri = f"/{service}"
         now = int(time.time())
         
-        payload = {
-            "sub": self.key_name,
-            "iss": "coinbase-cloud",
-            "nbf": now,
-            "exp": now + 120,  # 2 minute expiration
-            "aud": [service],
-            "uri": uri,
-        }
+        if for_websocket:
+            # WebSocket JWT - simpler payload (no aud, no uri)
+            payload = {
+                "sub": self.key_name,
+                "iss": "coinbase-cloud",
+                "iat": now,
+                "exp": now + 120,  # 2 minute expiration
+            }
+        else:
+            # REST API JWT - full payload
+            uri = f"/{service}"
+            payload = {
+                "sub": self.key_name,
+                "iss": "coinbase-cloud",
+                "nbf": now,
+                "exp": now + 120,
+                "aud": [service],
+                "uri": uri,
+            }
         
         token = jwt.encode(payload, self.private_key, algorithm="ES256")
         return token
