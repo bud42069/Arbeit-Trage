@@ -115,6 +115,10 @@ app.add_middleware(
 # Include authentication routes
 app.include_router(auth_router)
 
+# Add rate limiting
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 
 async def monitor_system_status():
     """Monitor system status and update metrics."""
