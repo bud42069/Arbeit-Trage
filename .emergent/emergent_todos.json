@@ -1,30 +1,6 @@
 [
   {
-    "content": "Create backend/.env.template with all required environment variables",
-    "status": "completed"
-  },
-  {
-    "content": "Create frontend/.env.template for frontend configuration",
-    "status": "completed"
-  },
-  {
-    "content": "Create comprehensive API documentation (docs/API.md)",
-    "status": "completed"
-  },
-  {
-    "content": "Create GitHub setup guide (docs/GITHUB_SETUP.md)",
-    "status": "completed"
-  },
-  {
-    "content": "Update .gitignore to exclude real .env but allow .env.template",
-    "status": "completed"
-  },
-  {
-    "content": "Update README.md with GitHub repository link and setup instructions",
-    "status": "completed"
-  },
-  {
-    "content": "Verify all documentation is complete and cross-referenced",
-    "status": "completed"
+    "content": "Investigate and fix Solana RPC connection failure - get live data working",
+    "status": "in_progress"
   }
 ]
