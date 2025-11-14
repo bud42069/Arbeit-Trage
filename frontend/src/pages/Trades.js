@@ -10,21 +10,23 @@ const Trades = () => {
     totalPnl: 0,
     avgLatency: 0
   });
+  const [totalCountFromDB, setTotalCountFromDB] = useState(0);  // Preserve DB total
 
   // WebSocket real-time updates
   const { isConnected } = useWebSocketSubscription('trade', useCallback((newTrade) => {
     setTrades(prev => {
-      const updated = [newTrade, ...prev];
+      const updated = [newTrade, ...prev].slice(0, 100);  // Keep only 100 visible
       
-      // Recalculate stats
+      // Recalculate stats for visible trades only
       const totalPnl = updated.reduce((sum, t) => sum + (parseFloat(t.pnl_abs) || 0), 0);
       const avgLatency = updated.reduce((sum, t) => sum + (parseInt(t.latency_ms) || 0), 0) / updated.length;
       
-      setStats({
-        total: updated.length,
+      // Increment total count (new trade added to DB)
+      setStats(prev => ({
+        total: prev.total + 1,  // Increment, don't replace!
         totalPnl,
         avgLatency
-      });
+      }));
       
       return updated;
     });
