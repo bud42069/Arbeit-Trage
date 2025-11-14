@@ -1,18 +1,26 @@
 [
   {
-    "content": "Debug Coinbase WebSocket subscription and complete connector",
-    "status": "completed"
+    "content": "Investigate Solana RPC exceptions - check error logs for specific exception details",
+    "status": "in_progress"
   },
   {
-    "content": "Document Coinbase connector issue (API key permissions - comprehensive guide created)",
-    "status": "completed"
+    "content": "Test Helius RPC endpoint connectivity and API key validity",
+    "status": "pending"
   },
   {
-    "content": "Test Coinbase connector with live orderbook data",
-    "status": "completed"
+    "content": "Verify Whirlpool pool address is still valid on-chain",
+    "status": "pending"
   },
   {
-    "content": "Integrate Coinbase data into signal engine for multi-venue comparison",
-    "status": "completed"
+    "content": "Implement retry logic with exponential backoff for RPC calls",
+    "status": "pending"
+  },
+  {
+    "content": "Add fallback RPC endpoints if Helius fails",
+    "status": "pending"
+  },
+  {
+    "content": "Verify Solana connector restoration and status pill shows Connected",
+    "status": "pending"
   }
 ]
