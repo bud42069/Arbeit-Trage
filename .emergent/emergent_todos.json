@@ -30,5 +30,21 @@
   {
     "content": "Add comprehensive testing (unit + integration tests)",
     "status": "completed"
+  },
+  {
+    "content": "Root cause analysis: Investigate why spreads are only 0.07-0.23%",
+    "status": "in_progress"
+  },
+  {
+    "content": "Deep testing: Edge cases (stale data, zero liquidity, API failures)",
+    "status": "pending"
+  },
+  {
+    "content": "Performance testing: Latency and throughput under load",
+    "status": "pending"
+  },
+  {
+    "content": "Integration testing: End-to-end flow validation",
+    "status": "pending"
   }
 ]
