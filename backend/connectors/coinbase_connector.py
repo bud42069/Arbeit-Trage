@@ -149,26 +149,41 @@ class CoinbaseConnector:
         """Process incoming WebSocket messages."""
         try:
             logger.info("Coinbase WS: Starting message handler")
+            message_count = 0
+            
             async for message in self.ws:
                 try:
                     data = json.loads(message)
-                    logger.info(f"Coinbase WS received: {json.dumps(data)[:200]}")
+                    message_count += 1
                     
-                    msg_type = data.get("type")
+                    # Log first 5 messages for debugging
+                    if message_count <= 5:
+                        logger.info(f"Coinbase WS received: {json.dumps(data)[:200]}")
                     
-                    if msg_type == "snapshot":
-                        await self._handle_l2_snapshot(data)
-                    elif msg_type == "l2update":  # Changed from "update" to "l2update"
-                        await self._handle_l2_update(data)
-                    elif msg_type == "subscriptions":
+                    # NEW FORMAT: Messages have channel and events array
+                    channel = data.get("channel")
+                    
+                    if channel == "l2_data":
+                        # Process l2_data events
+                        events = data.get("events", [])
+                        for event in events:
+                            event_type = event.get("type")
+                            
+                            if event_type == "snapshot":
+                                await self._handle_l2_snapshot(event)
+                            elif event_type == "update":
+                                await self._handle_l2_update(event)
+                    
+                    elif channel == "subscriptions":
                         logger.info(f"✅ Coinbase subscription confirmed: {data}")
-                    elif msg_type == "heartbeat":
-                        # Coinbase sends heartbeats - just log occasionally
+                    
+                    elif channel == "heartbeats":
+                        # Heartbeat - silent
                         pass
-                    elif msg_type == "error":
-                        logger.error(f"❌ Coinbase WS error message: {data}")
-                    else:
-                        logger.debug(f"Coinbase WS message type '{msg_type}': {json.dumps(data)[:200]}")
+                    
+                    # Log every 100 messages
+                    if message_count % 100 == 0:
+                        logger.info(f"📊 Processed {message_count} Coinbase messages")
                         
                 except json.JSONDecodeError as e:
                     logger.error(f"Coinbase WS JSON decode error: {e}, message: {message[:200]}")
