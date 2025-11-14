@@ -8,19 +8,11 @@
     "status": "completed"
   },
   {
-    "content": "Test Coinbase connector with live orderbook data (BLOCKED: Awaiting correct Advanced Trade API keys from user)",
-    "status": "pending"
+    "content": "Test Coinbase connector with live orderbook data",
+    "status": "completed"
   },
   {
-    "content": "Integrate Coinbase data into signal engine for multi-venue comparison (BLOCKED: Same API key issue)",
-    "status": "pending"
-  },
-  {
-    "content": "Production hardening: Add CI/CD pipeline basics",
-    "status": "pending"
-  },
-  {
-    "content": "Production hardening: Security controls (rate limiting, auth)",
-    "status": "pending"
+    "content": "Integrate Coinbase data into signal engine for multi-venue comparison",
+    "status": "completed"
   }
 ]
