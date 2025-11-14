@@ -69,6 +69,7 @@ class SolanaConnector:
     async def fetch_pool_state(self, pool_address: str) -> Optional[Dict]:
         """
         Fetch real Whirlpool pool state with proper sqrtPrice parsing.
+        Falls back to public RPC if Helius fails.
         
         Whirlpool account layout:
         - Bytes 0-7: Discriminator
@@ -82,27 +83,41 @@ class SolanaConnector:
             import struct
             
             pubkey = Pubkey.from_string(pool_address)
-            response = await self.client.get_account_info(pubkey)
+            
+            # Try primary RPC (Helius) first
+            client_to_use = self.client
+            rpc_name = "Helius"
+            
+            try:
+                response = await self.client.get_account_info(pubkey)
+            except Exception as helius_error:
+                # If Helius fails, try public RPC fallback
+                logger.warning(f"Helius RPC failed: {helius_error}, trying public RPC fallback")
+                client_to_use = self.fallback_client
+                rpc_name = "Public RPC"
+                self.using_fallback = True
+                response = await self.fallback_client.get_account_info(pubkey)
             
             if not response.value or not response.value.data:
-                logger.warning(f"No account data for pool {pool_address}, using fallback")
+                logger.error(f"No account data for pool {pool_address} from {rpc_name}")
                 self.connected = False
-                return self._get_mock_pool_for_testing(pool_address)
+                raise ValueError(f"No pool data available from {rpc_name}")
             
             # Mark as connected since we successfully fetched data
             self.connected = True
+            if self.using_fallback:
+                logger.info(f"✅ Connected to Solana via {rpc_name}")
             
             account_data = bytes(response.value.data)
             
             # Log account data details for debugging
-            logger.info(f"Whirlpool account data length: {len(account_data)} bytes")
-            logger.info(f"First 32 bytes (hex): {account_data[:32].hex()}")
-            logger.info(f"Bytes 128-144 (hex): {account_data[128:144].hex()}")
+            logger.info(f"Whirlpool account data from {rpc_name}: {len(account_data)} bytes")
             
             # Verify sufficient data length
             if len(account_data) < 144:
-                logger.warning(f"Account data too short ({len(account_data)} bytes), need at least 144, using fallback")
-                return self._get_mock_pool_for_testing(pool_address)
+                logger.error(f"Account data too short ({len(account_data)} bytes), need at least 144")
+                self.connected = False
+                raise ValueError(f"Insufficient pool data length: {len(account_data)} bytes")
             
             # Exact Whirlpool account layout (from empirical testing 2025-01-14):
             # Offset 0-7: Anchor discriminator (8 bytes)
