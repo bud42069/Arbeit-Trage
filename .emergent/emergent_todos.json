@@ -1,6 +1,10 @@
 [
   {
     "content": "Debug Coinbase WebSocket subscription and complete connector",
+    "status": "completed"
+  },
+  {
+    "content": "Document Coinbase connector issue (wrong API keys - Trade API vs Advanced Trade API)",
     "status": "in_progress"
   },
   {
@@ -9,10 +13,6 @@
   },
   {
     "content": "Integrate Coinbase data into signal engine for multi-venue comparison",
-    "status": "pending"
-  },
-  {
-    "content": "Document Coinbase connector setup and testing",
     "status": "pending"
   },
   {
