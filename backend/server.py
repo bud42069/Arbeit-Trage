@@ -254,11 +254,17 @@ class ControlAction(BaseModel):
 
 
 @app.post("/api/v1/controls/pause")
-async def pause_trading(action: ControlAction):
-    """Pause trading."""
-    reason = action.reason or "Manual pause"
+async def pause_trading(
+    action: ControlAction,
+    current_user = Depends(require_operator)
+):
+    """Pause trading (requires operator or admin role)."""
+    reason = action.reason or f"Manual pause by {current_user.username}"
     await risk_service.trigger_pause(reason)
-    return {"status": "paused", "reason": reason}
+    
+    logger.info(f"Trading paused by {current_user.username}: {reason}")
+    
+    return {"status": "paused", "reason": reason, "paused_by": current_user.username}
 
 
 @app.post("/api/v1/controls/resume")
