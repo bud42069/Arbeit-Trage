@@ -74,7 +74,8 @@ class RiskService:
             "daily_pnl_usd": float(self.daily_pnl),
             "daily_trades": self.daily_trades,
             "daily_loss_limit_usd": settings.daily_loss_limit_usd,
-            "daily_remaining_loss_usd": float(Decimal(str(settings.daily_loss_limit_usd)) + self.daily_pnl)
+            "daily_remaining_loss_usd": float(Decimal(str(settings.daily_loss_limit_usd)) + self.daily_pnl),
+            "observe_only": settings.observe_only_mode
         }
     
     async def resume(self):
