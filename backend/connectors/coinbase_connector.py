@@ -114,12 +114,17 @@ class CoinbaseConnector:
         if not self.ws:
             await self.connect_public_ws()
         
+        # Generate JWT for subscription (Coinbase Advanced requires auth even for public data)
+        jwt_token = self.authenticator.build_jwt(service="public_websocket_api")
+        
         subscribe_msg = {
             "type": "subscribe",
             "product_ids": [product_id],
             "channel": "level2",
+            "jwt": jwt_token
         }
         
+        logger.info(f"Sending subscription for {product_id} with JWT auth")
         await self.ws.send(json.dumps(subscribe_msg))
         self.subscribed_products.append(product_id)
         self.books[product_id] = {"bids": [], "asks": []}
