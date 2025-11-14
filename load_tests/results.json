@@ -1,0 +1,719 @@
+{
+  "timestamp": "2025-11-14T08:53:22.025577",
+  "total_requests": 200,
+  "successful_requests": 200,
+  "failed_requests": 0,
+  "duration_seconds": 3.4093332290649414,
+  "requests_per_second": 58.662496905546796,
+  "latency_ms": {
+    "min": 0.5326271057128906,
+    "max": 985.3217601776123,
+    "mean": 197.40170001983643,
+    "median": 154.33406829833984,
+    "p95": 808.1328868865967,
+    "p99": 963.2246494293213
+  },
+  "error_rate": 0.0,
+  "results": [
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 985.3217601776123,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 104.33030128479004,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 33.6000919342041,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.8292198181152344,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 963.2246494293213,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 101.0904312133789,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 29.592514038085938,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 1.35040283203125,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 943.6562061309814,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 101.70459747314453,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 72.6163387298584,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.9684562683105469,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 924.5095252990723,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 102.02360153198242,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 37.38212585449219,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.6725788116455078,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 904.9625396728516,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 107.15985298156738,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 71.43306732177734,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.6878376007080078,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 885.7910633087158,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 106.32944107055664,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 72.03984260559082,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.7712841033935547,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 866.2574291229248,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 104.96211051940918,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 34.23643112182617,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.8189678192138672,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 847.0003604888916,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 109.62104797363281,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 81.08997344970703,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.6680488586425781,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 827.8946876525879,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 107.64884948730469,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 73.43006134033203,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.6611347198486328,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 808.1328868865967,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 105.01694679260254,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 73.77123832702637,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.9438991546630859,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 788.9635562896729,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 103.51967811584473,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 36.72146797180176,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.8637905120849609,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 769.8898315429688,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 110.67509651184082,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 77.4831771850586,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.7746219635009766,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 750.4477500915527,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 105.96060752868652,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 77.39067077636719,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 1.127481460571289,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 731.1460971832275,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 173.65503311157227,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 199.44071769714355,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 1.621246337890625,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 712.026834487915,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 109.47465896606445,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 82.72242546081543,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.6396770477294922,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 692.293643951416,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 108.86383056640625,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 71.29406929016113,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.8394718170166016,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 673.5119819641113,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 110.8856201171875,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 167.4215793609619,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 1.0373592376708984,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 654.2525291442871,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 112.65993118286133,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 167.07539558410645,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.7228851318359375,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 634.3066692352295,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 111.97781562805176,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 161.78250312805176,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 1.2302398681640625,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 614.6337985992432,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 110.74233055114746,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 162.25028038024902,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 1.4426708221435547,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 595.4911708831787,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 112.23101615905762,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 162.97435760498047,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.743865966796875,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 576.6007900238037,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 148.83756637573242,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 156.8131446838379,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.9472370147705078,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 557.29079246521,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 112.55025863647461,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 168.22004318237305,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.8890628814697266,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 538.2294654846191,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 147.84526824951172,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 154.92677688598633,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 1.0170936584472656,
+      "success": true,
+      "request_num": 3
+    },
+    {
+      "endpoint": "/api/v1/status",
+      "status": 200,
+      "latency_ms": 518.5823440551758,
+      "success": true,
+      "request_num": 0
+    },
+    {
+      "endpoint": "/api/v1/opportunities?limit=50",
+      "status": 200,
+      "latency_ms": 148.54788780212402,
+      "success": true,
+      "request_num": 1
+    },
+    {
+      "endpoint": "/api/v1/trades?limit=100",
+      "status": 200,
+      "latency_ms": 158.1859588623047,
+      "success": true,
+      "request_num": 2
+    },
+    {
+      "endpoint": "/api/metrics",
+      "status": 200,
+      "latency_ms": 0.6623268127441406,
+      "success": true,
+      "request_num": 3
+    }
+  ]
+}
