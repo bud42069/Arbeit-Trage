@@ -269,9 +269,6 @@ class CoinbaseConnector:
         if book["bids"] and book["asks"]:
             await self._emit_book_update(product_id)
     
-    def get_best_bid_ask(self, product_id: str) -> tuple[Optional[float], Optional[float], Optional[float], Optional[float]]:
-        """Get best bid/ask with sizes."""
-    
     async def _emit_book_update(self, product_id: str):
         """Emit book update event."""
         book = self.books[product_id]
@@ -284,7 +281,9 @@ class CoinbaseConnector:
             sequence=None
         )
         await event_bus.publish("cex.bookUpdate", book_update)
-
+    
+    def get_best_bid_ask(self, product_id: str) -> tuple[Optional[float], Optional[float], Optional[float], Optional[float]]:
+        """Get best bid/ask with sizes."""
         book = self.books.get(product_id, {})
         bids = book.get("bids", [])
         asks = book.get("asks", [])
