@@ -4,7 +4,7 @@ import json
 import logging
 from typing import Dict, Optional, List
 from decimal import Decimal
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 import httpx
 from solders.pubkey import Pubkey
 from solders.rpc.responses import GetAccountInfoResp
@@ -213,7 +213,7 @@ class SolanaConnector:
         pool_update = PoolUpdate(
             program="whirlpool",  # Or detect from account data
             pool=pool_state["address"],
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             reserves={
                 settings.usdc_mint: str(token_a_reserve),
                 settings.wsol_mint: str(token_b_reserve)
