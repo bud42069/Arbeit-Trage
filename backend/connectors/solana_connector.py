@@ -206,20 +206,36 @@ class SolanaConnector:
         }
     
     async def subscribe_pool_updates(self, pool_addresses: List[str]):
-        """Subscribe to pool account updates via WebSocket."""
-        # For POC, use polling instead of WS subscription
-        # Production would use accountSubscribe
+        """Subscribe to pool account updates via polling with error handling."""
+        consecutive_errors = 0
+        max_consecutive_errors = 5
+        
         while True:
             try:
                 for pool_addr in pool_addresses:
-                    pool_state = await self.fetch_pool_state(pool_addr)
-                    if pool_state:
-                        await self._emit_pool_update(pool_state)
+                    try:
+                        pool_state = await self.fetch_pool_state(pool_addr)
+                        if pool_state:
+                            await self._emit_pool_update(pool_state)
+                            consecutive_errors = 0  # Reset on success
+                    except Exception as pool_error:
+                        consecutive_errors += 1
+                        logger.error(f"Failed to fetch pool {pool_addr}: {pool_error}")
+                        
+                        if consecutive_errors >= max_consecutive_errors:
+                            logger.critical(f"Failed to fetch pool data {consecutive_errors} times consecutively. Connection issues.")
+                            self.connected = False
+                            await asyncio.sleep(10)  # Wait longer before retry
+                        else:
+                            await asyncio.sleep(2)  # Short wait before retry
+                        continue
                 
                 await asyncio.sleep(2)  # Poll every 2 seconds
                 
             except Exception as e:
+                consecutive_errors += 1
                 logger.error(f"Pool subscription error: {e}")
+                self.connected = False
                 await asyncio.sleep(5)
     
     async def _emit_pool_update(self, pool_state: Dict):
