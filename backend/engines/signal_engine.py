@@ -3,7 +3,7 @@ import logging
 import uuid
 from typing import Dict, Optional
 from decimal import Decimal
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 
 from shared.types import Opportunity, Window, BookUpdate, PoolUpdate
 from shared.events import event_bus
@@ -173,7 +173,7 @@ class SignalEngine:
             spread_pct=spread_pct,
             predicted_pnl_pct=predicted_pnl_pct,
             size=Decimal("50"),  # Base size, will be adjusted by executor
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             window_id=window.id
         )
         
