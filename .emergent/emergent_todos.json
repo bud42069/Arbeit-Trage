@@ -1,34 +1,38 @@
 [
   {
-    "content": "Verify environment templates exist and contain all required variables",
-    "status": "completed"
+    "content": "Implement stale-data detection test",
+    "status": "pending"
   },
   {
-    "content": "Verify .gitignore properly excludes .env but allows .env.template",
-    "status": "completed"
+    "content": "Create unit tests for pool-math calculations",
+    "status": "pending"
   },
   {
-    "content": "Verify API documentation completeness and accuracy",
-    "status": "completed"
+    "content": "Create unit tests for PnL calculations",
+    "status": "pending"
   },
   {
-    "content": "Verify GitHub setup guide is complete and actionable",
-    "status": "completed"
+    "content": "Run comprehensive test suite and verify all pass",
+    "status": "pending"
   },
   {
-    "content": "Verify README has proper setup instructions and cross-references",
-    "status": "completed"
+    "content": "Phase 5.1: Set up CI/CD pipeline with GitHub Actions",
+    "status": "pending"
   },
   {
-    "content": "Verify all documentation cross-references are valid",
-    "status": "completed"
+    "content": "Phase 5.2: Implement authentication and authorization",
+    "status": "pending"
   },
   {
-    "content": "Test that API endpoints match documentation",
-    "status": "completed"
+    "content": "Phase 5.3: Add rate limiting on API endpoints",
+    "status": "pending"
   },
   {
-    "content": "Verify RUNBOOK procedures are accurate",
-    "status": "completed"
+    "content": "Phase 5.4: Set up Prometheus alerting rules",
+    "status": "pending"
+  },
+  {
+    "content": "Phase 5.5: Perform load testing",
+    "status": "pending"
   }
 ]
