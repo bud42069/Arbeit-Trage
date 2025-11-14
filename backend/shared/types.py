@@ -37,7 +37,7 @@ class OrderStatus(str, Enum):
     FAILED = "failed"
 
 
-class BookUpdate(BaseModel):
+class BookUpdate(BaseModelWithTimezone):
     """CEX order book update event."""
     venue: str
     pair: str
@@ -47,7 +47,7 @@ class BookUpdate(BaseModel):
     sequence: int
 
 
-class PoolUpdate(BaseModel):
+class PoolUpdate(BaseModelWithTimezone):
     """DEX pool update event."""
     program: str
     pool: str
@@ -57,7 +57,7 @@ class PoolUpdate(BaseModel):
     fee_bps: int
 
 
-class BoundQuote(BaseModel):
+class BoundQuote(BaseModelWithTimezone):
     """DEX bound quote for execution."""
     pool_or_route_id: str
     side: Side
@@ -69,7 +69,7 @@ class BoundQuote(BaseModel):
     expires_ts: datetime
 
 
-class Opportunity(BaseModel):
+class Opportunity(BaseModelWithTimezone):
     """Arbitrage opportunity detected."""
     id: str
     asset: str
