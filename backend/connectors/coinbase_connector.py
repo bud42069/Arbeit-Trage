@@ -272,12 +272,17 @@ class CoinbaseConnector:
     async def _emit_book_update(self, product_id: str):
         """Emit book update event."""
         book = self.books[product_id]
+        
+        # Convert floats to strings for Pydantic validation
+        bids_str = [[str(p), str(s)] for p, s in book["bids"][:10]]
+        asks_str = [[str(p), str(s)] for p, s in book["asks"][:10]]
+        
         book_update = BookUpdate(
             venue="coinbase",
             pair=product_id,
             timestamp=self.last_update[product_id],
-            bids=book["bids"],
-            asks=book["asks"],
+            bids=bids_str,
+            asks=asks_str,
             sequence=None
         )
         await event_bus.publish("cex.bookUpdate", book_update)
