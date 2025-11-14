@@ -118,8 +118,10 @@ const Opportunities = () => {
                         )}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right text-sm font-medium tabular text-success">
-                      +{Number(opp.predicted_pnl_pct).toFixed(2)}%
+                    <td className="px-6 py-4 text-right text-sm font-medium tabular">
+                      <span className={Number(opp.predicted_pnl_pct) >= 0 ? 'text-success' : 'text-destructive'}>
+                        {Number(opp.predicted_pnl_pct) >= 0 ? '+' : ''}{Number(opp.predicted_pnl_pct).toFixed(2)}%
+                      </span>
                     </td>
                     <td className="px-6 py-4 text-right text-sm tabular text-secondary">
                       {Number(opp.spread_pct || 0).toFixed(2)}%
