@@ -1,9 +1,5 @@
 [
   {
-    "content": "Phase 5.1: Set up CI/CD pipeline with GitHub Actions",
-    "status": "completed"
-  },
-  {
     "content": "Phase 5.2: Implement authentication and authorization",
     "status": "in_progress"
   },
