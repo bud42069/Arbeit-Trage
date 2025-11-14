@@ -32,6 +32,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Rate limiting
+limiter = Limiter(key_func=get_remote_address)
+
 # WebSocket connections
 active_connections: List[WebSocket] = []
 
