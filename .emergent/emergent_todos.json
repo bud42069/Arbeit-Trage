@@ -1,6 +1,34 @@
 [
   {
-    "content": "Investigate and fix Solana RPC connection failure - get live data working",
-    "status": "completed"
+    "content": "Verify environment templates exist and contain all required variables",
+    "status": "in_progress"
+  },
+  {
+    "content": "Verify .gitignore properly excludes .env but allows .env.template",
+    "status": "pending"
+  },
+  {
+    "content": "Verify API documentation completeness and accuracy",
+    "status": "pending"
+  },
+  {
+    "content": "Verify GitHub setup guide is complete and actionable",
+    "status": "pending"
+  },
+  {
+    "content": "Verify README has proper setup instructions and cross-references",
+    "status": "pending"
+  },
+  {
+    "content": "Verify all documentation cross-references are valid",
+    "status": "pending"
+  },
+  {
+    "content": "Test that API endpoints match documentation",
+    "status": "pending"
+  },
+  {
+    "content": "Verify RUNBOOK procedures are accurate",
+    "status": "pending"
   }
 ]
