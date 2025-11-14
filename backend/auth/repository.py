@@ -18,9 +18,9 @@ class UserRepository:
     async def _ensure_collection(self):
         """Ensure collection is initialized."""
         if self.collection is None:
-            if db_module.db is None:
+            if db_module.db_manager.db is None:
                 await db_module.init_repositories()
-            self.collection = db_module.db["users"]
+            self.collection = db_module.db_manager.db["users"]
             
             # Create indexes
             await self.collection.create_index("username", unique=True)
