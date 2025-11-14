@@ -99,6 +99,7 @@ class CoinbaseConnector:
         # Order book storage: product_id -> {bids: [], asks: []}
         self.books: Dict[str, Dict] = {}
         self.last_update: Dict[str, datetime] = {}
+        self.connected = False
         
         self.ws = None
         self.ws_task = None
