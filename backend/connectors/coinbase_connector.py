@@ -132,16 +132,21 @@ class CoinbaseConnector:
             async for message in self.ws:
                 data = json.loads(message)
                 
-                msg_type = data.get("channel")
-                if msg_type == "l2_data":
+                msg_type = data.get("type")
+                
+                if msg_type == "snapshot":
+                    await self._handle_l2_snapshot(data)
+                elif msg_type == "update":
                     await self._handle_l2_update(data)
                 elif msg_type == "subscriptions":
                     logger.info(f"Coinbase subscription confirmed: {data}")
+                elif msg_type == "error":
+                    logger.error(f"Coinbase WS error message: {data}")
                 
         except websockets.exceptions.ConnectionClosed:
             logger.warning("Coinbase WS connection closed")
         except Exception as e:
-            logger.error(f"Coinbase WS error: {e}")
+            logger.error(f"Coinbase WS error: {e}", exc_info=True)
     
     async def _handle_l2_update(self, data: dict):
         """Handle L2 orderbook updates."""
