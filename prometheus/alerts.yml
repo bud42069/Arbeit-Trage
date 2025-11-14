@@ -1,0 +1,216 @@
+# Prometheus Alerting Rules for CEX/DEX Arbitrage Platform
+# Place this file in your Prometheus config directory and reference it in prometheus.yml
+
+groups:
+  - name: arbitrage_critical
+    interval: 10s
+    rules:
+      # Connection monitoring
+      - alert: ConnectorDisconnected
+        expr: arb_connection_status == 0
+        for: 30s
+        labels:
+          severity: critical
+          component: connector
+        annotations:
+          summary: "{{ $labels.venue }} connector disconnected"
+          description: "The {{ $labels.venue }} data connector has been disconnected for more than 30 seconds. Trading may be paused."
+          runbook: "Check connector logs and verify API credentials. See RUNBOOK.md for troubleshooting."
+      
+      # Data staleness
+      - alert: StaleDataDetected
+        expr: arb_ws_staleness_seconds > 10
+        for: 10s
+        labels:
+          severity: critical
+          component: data_feed
+        annotations:
+          summary: "Stale data from {{ $labels.venue }}"
+          description: "No data received from {{ $labels.venue }} for {{ $value }} seconds (threshold: 10s). Risk kill-switch should be triggered."
+          runbook: "Verify connector status, check network connectivity, review logs at /var/log/supervisor/backend.err.log"
+      
+      # Risk management - Daily loss limit
+      - alert: DailyLossLimitApproaching
+        expr: arb_daily_pnl_usd < -400
+        for: 1m
+        labels:
+          severity: warning
+          component: risk_management
+        annotations:
+          summary: "Daily loss approaching limit ({{ $value | humanize }} USD)"
+          description: "Daily PnL is {{ $value | humanize }} USD, approaching the -$500 limit. System will auto-pause at -$500."
+          runbook: "Review recent trades, check for execution errors or adverse market conditions. Consider manual pause."
+      
+      - alert: DailyLossLimitExceeded
+        expr: arb_daily_pnl_usd <= -500
+        for: 10s
+        labels:
+          severity: critical
+          component: risk_management
+        annotations:
+          summary: "Daily loss limit EXCEEDED"
+          description: "Daily PnL is {{ $value | humanize }} USD. System should be auto-paused. Manual review required."
+          runbook: "System paused due to daily loss limit. Review all trades, investigate root cause. Do not resume until analyzed."
+      
+      # Risk service paused
+      - alert: TradingSystemPaused
+        expr: arb_risk_paused == 1
+        for: 1m
+        labels:
+          severity: warning
+          component: risk_management
+        annotations:
+          summary: "Trading system is PAUSED"
+          description: "Risk service has paused trading. Check reason in system status."
+          runbook: "Check /api/v1/status for pause_reason. Investigate cause before resuming."
+      
+      # High error rate
+      - alert: HighAPIErrorRate
+        expr: |
+          (
+            sum(rate(http_requests_total{status=~"5.."}[5m])) 
+            / 
+            sum(rate(http_requests_total[5m]))
+          ) > 0.05
+        for: 2m
+        labels:
+          severity: warning
+          component: api
+        annotations:
+          summary: "High API error rate ({{ $value | humanizePercentage }})"
+          description: "More than 5% of API requests are returning 5xx errors in the last 5 minutes."
+          runbook: "Check backend logs for errors, verify database connectivity, check service health."
+
+  - name: arbitrage_performance
+    interval: 30s
+    rules:
+      # Detection latency
+      - alert: HighDetectionLatency
+        expr: arb_signal_detection_latency_seconds{quantile="0.95"} > 2.0
+        for: 5m
+        labels:
+          severity: warning
+          component: signal_engine
+        annotations:
+          summary: "High signal detection latency (p95: {{ $value }}s)"
+          description: "95th percentile signal detection latency is {{ $value }}s, exceeding 2s SLO."
+          runbook: "Check event bus backlog, verify connector performance, consider optimizing signal engine logic."
+      
+      # Execution latency
+      - alert: HighExecutionLatency
+        expr: arb_execution_latency_seconds{quantile="0.95"} > 1.5
+        for: 5m
+        labels:
+          severity: warning
+          component: execution_engine
+        annotations:
+          summary: "High execution latency (p95: {{ $value }}s)"
+          description: "95th percentile execution latency is {{ $value }}s, exceeding 1.5s SLO."
+          runbook: "Check CEX/DEX API response times, verify network conditions, review execution logs."
+      
+      # Low opportunity rate (possible issue)
+      - alert: NoOpportunitiesDetected
+        expr: rate(arb_opportunities_total[30m]) == 0
+        for: 1h
+        labels:
+          severity: info
+          component: signal_engine
+        annotations:
+          summary: "No opportunities detected for 1 hour"
+          description: "Signal engine has not detected any opportunities in the past hour. May be normal during low volatility."
+          runbook: "Verify connectors are streaming data, check if spread threshold is too high, review market conditions."
+      
+      # MongoDB performance
+      - alert: SlowDatabaseWrites
+        expr: arb_db_write_latency_seconds{quantile="0.95"} > 0.1
+        for: 5m
+        labels:
+          severity: warning
+          component: database
+        annotations:
+          summary: "Slow database writes (p95: {{ $value }}s)"
+          description: "95th percentile database write latency is {{ $value }}s, exceeding 100ms."
+          runbook: "Check MongoDB performance, verify disk I/O, consider adding indexes or scaling database."
+
+  - name: arbitrage_business
+    interval: 1m
+    rules:
+      # Execution failures
+      - alert: HighExecutionFailureRate
+        expr: |
+          (
+            rate(arb_execution_failures_total[10m])
+            /
+            rate(arb_opportunities_total[10m])
+          ) > 0.10
+        for: 5m
+        labels:
+          severity: warning
+          component: execution_engine
+        annotations:
+          summary: "High execution failure rate ({{ $value | humanizePercentage }})"
+          description: "More than 10% of opportunities are failing to execute in the last 10 minutes."
+          runbook: "Check execution logs for errors, verify CEX/DEX API health, check account balances and permissions."
+      
+      # Negative PnL streak
+      - alert: ConsecutiveLosingTrades
+        expr: arb_consecutive_losing_trades > 5
+        for: 2m
+        labels:
+          severity: warning
+          component: trading_logic
+        annotations:
+          summary: "{{ $value }} consecutive losing trades"
+          description: "System has executed {{ $value }} consecutive losing trades. May indicate systematic issue."
+          runbook: "Review recent trades for patterns, check if slippage estimates are accurate, verify pricing data quality."
+      
+      # Position size violations
+      - alert: MaxPositionSizeViolation
+        expr: arb_max_position_size_usd > 1000
+        for: 1m
+        labels:
+          severity: critical
+          component: risk_management
+        annotations:
+          summary: "Position size exceeds limit ({{ $value }} USD)"
+          description: "A position size of {{ $value }} USD exceeds the configured limit of $1000."
+          runbook: "Immediate investigation required. Check execution engine logic and risk controls."
+
+  - name: arbitrage_infrastructure
+    interval: 1m
+    rules:
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: process_resident_memory_bytes > 1073741824  # 1GB
+        for: 5m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High memory usage ({{ $value | humanize1024 }})"
+          description: "Backend process is using {{ $value | humanize1024 }} of memory."
+          runbook: "Check for memory leaks, review event bus size, consider restarting service."
+      
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: rate(process_cpu_seconds_total[5m]) > 0.8
+        for: 10m
+        labels:
+          severity: warning
+          component: system
+        annotations:
+          summary: "High CPU usage ({{ $value | humanizePercentage }})"
+          description: "Backend process CPU usage is {{ $value | humanizePercentage }} over the last 5 minutes."
+          runbook: "Check event processing rates, review connector logs, consider optimizing signal detection logic."
+      
+      # Service down
+      - alert: ServiceDown
+        expr: up{job="arbitrage"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          component: system
+        annotations:
+          summary: "Arbitrage service is DOWN"
+          description: "Prometheus cannot scrape metrics from the arbitrage service."
+          runbook: "Check if backend is running (supervisorctl status), review logs, verify network connectivity."
