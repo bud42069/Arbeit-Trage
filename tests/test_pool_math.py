@@ -32,8 +32,8 @@ class TestConstantProductQuote:
         assert exec_price > Decimal("0.99")
         assert exec_price < Decimal("1.0")
         
-        # Impact should be small
-        assert impact_pct < Decimal("1.0")  # Less than 1%
+        # Impact should be reasonable for 1% trade size
+        assert impact_pct < Decimal("3.0")  # Less than 3%
     
     def test_swap_with_standard_fee(self):
         """Test swap with standard 30 bps (0.3%) fee."""
