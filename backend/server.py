@@ -105,6 +105,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include authentication routes
+app.include_router(auth_router)
+
 
 async def monitor_system_status():
     """Monitor system status and update metrics."""
