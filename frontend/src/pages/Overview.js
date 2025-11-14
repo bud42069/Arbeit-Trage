@@ -129,7 +129,7 @@ const Overview = () => {
 const KPICard = ({ title, value, format, icon: Icon, sparkline, testId }) => {
   const formatValue = (val) => {
     if (format === 'currency') {
-      const sign = val >= 0 ? '+' : '';
+      const sign = val >= 0 ? '+' : '-';
       return `${sign}$${Math.abs(val).toFixed(2)}`;
     }
     if (format === 'percent') {
