@@ -65,15 +65,20 @@ const Trades = () => {
         description: 'Fetching complete trade history from database'
       });
       
-      // Fetch ALL trades from database (no limit)
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/trades?limit=10000`);
-      const data = await response.json();
-      const allTrades = data.trades || [];
+      // First, get the total count
+      const countResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/trades?limit=1`);
+      const countData = await countResponse.json();
+      const totalCount = countData.total_count || 0;
       
-      if (allTrades.length === 0) {
+      if (totalCount === 0) {
         toast.error('No trades to export');
         return;
       }
+      
+      // Fetch ALL trades (use total_count + buffer for safety)
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/trades?limit=${totalCount + 100}`);
+      const data = await response.json();
+      const allTrades = data.trades || [];
       
       // Generate CSV from ALL trades
       const headers = ['Timestamp', 'Asset', 'Direction', 'Size USD', 'CEX Price', 'DEX Price', 'PnL USD', 'PnL %', 'Latency ms', 'Status'];
@@ -95,12 +100,15 @@ const Trades = () => {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `trades_complete_${Date.now()}.csv`;
+      
+      // Timestamp in filename for uniqueness
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+      a.download = `trades_complete_${timestamp}.csv`;
       a.click();
       
       // Success toast
       toast.success(`Exported ${allTrades.length} trades`, {
-        description: `File: trades_complete_${Date.now()}.csv`
+        description: `File: trades_complete_${timestamp}.csv`
       });
       
     } catch (error) {
