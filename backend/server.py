@@ -4,9 +4,12 @@ import logging
 from contextlib import asynccontextmanager
 from typing import List, Optional
 from datetime import datetime, timezone
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Response, Depends
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Response, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 from config import settings
 from shared.types import Trade, Opportunity
