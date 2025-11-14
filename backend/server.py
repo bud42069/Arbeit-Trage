@@ -18,6 +18,7 @@ from connectors.solana_connector import solana_connector
 from engines.signal_engine import signal_engine
 from engines.execution_engine import execution_engine
 from services.risk_service import risk_service
+from observability.metrics import get_metrics, risk_paused, daily_pnl_usd, connection_status
 from auth.routes import router as auth_router
 from auth.dependencies import require_admin, require_operator, get_current_user_or_api_key
 from auth.repository import user_repo
