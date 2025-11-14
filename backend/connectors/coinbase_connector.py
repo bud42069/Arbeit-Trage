@@ -148,6 +148,36 @@ class CoinbaseConnector:
         except Exception as e:
             logger.error(f"Coinbase WS error: {e}", exc_info=True)
     
+    async def _handle_l2_snapshot(self, data: dict):
+        """Handle initial L2 orderbook snapshot."""
+        product_id = data.get("product_id")
+        if not product_id:
+            return
+        
+        bids = [(float(p), float(s)) for p, s in data.get("bids", [])]
+        asks = [(float(p), float(s)) for p, s in data.get("asks", [])]
+        
+        # Store top 10 levels
+        self.books[product_id] = {
+            "bids": sorted(bids, key=lambda x: x[0], reverse=True)[:10],
+            "asks": sorted(asks, key=lambda x: x[0])[:10]
+        }
+        
+        self.last_update[product_id] = datetime.now(timezone.utc)
+        
+        logger.info(f"Coinbase {product_id} snapshot: {len(bids)} bids, {len(asks)} asks")
+        
+        # Emit initial book event
+        book_update = BookUpdate(
+            venue="coinbase",
+            pair=product_id,
+            timestamp=self.last_update[product_id],
+            bids=self.books[product_id]["bids"],
+            asks=self.books[product_id]["asks"],
+            sequence=None
+        )
+        await event_bus.publish("cex.bookUpdate", book_update)
+    
     async def _handle_l2_update(self, data: dict):
         """Handle L2 orderbook updates."""
         events = data.get("events", [])
