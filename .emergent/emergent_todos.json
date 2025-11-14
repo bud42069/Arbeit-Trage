@@ -1,7 +1,7 @@
 [
   {
     "content": "Implement stale-data detection test",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Create unit tests for pool-math calculations",
