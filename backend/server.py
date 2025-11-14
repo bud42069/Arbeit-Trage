@@ -211,7 +211,7 @@ async def inject_test_opportunity(
         spread_pct=Decimal(str(spread_pct)),
         predicted_pnl_pct=Decimal(str(spread_pct - 1.4)),  # After 1.4% costs
         size=Decimal("100"),
-        timestamp=datetime.utcnow(),
+        timestamp=datetime.now(timezone.utc),
         window_id=str(uuid.uuid4())
     )
     
