@@ -15,9 +15,9 @@ import {
 export const Layout = ({ children }) => {
   const location = useLocation();
   const [status, setStatus] = useState({
-    gemini: 'degraded',
-    coinbase: 'degraded',
-    solana: 'degraded',
+    gemini: 'down',
+    coinbase: 'down',
+    solana: 'down',
     observeOnly: false,
     isPaused: false
   });
@@ -35,7 +35,7 @@ export const Layout = ({ children }) => {
         
         setStatus({
           gemini: connections.gemini ? 'healthy' : 'down',
-          coinbase: connections.coinbase ? 'healthy' : 'degraded',
+          coinbase: connections.coinbase ? 'healthy' : 'down',
           solana: connections.solana ? 'healthy' : 'down',
           observeOnly: risk.observe_only || false,
           isPaused: risk.is_paused || false
