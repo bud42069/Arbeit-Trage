@@ -196,7 +196,7 @@ class CoinbaseConnector:
         except Exception as e:
             logger.error(f"Coinbase WS error: {e}", exc_info=True)
     
-    async def _handle_l2_snapshot(self, event: dict):
+    async def _handle_l2_snapshot(self, event: dict, sequence_num: int):
         """Handle initial L2 orderbook snapshot."""
         product_id = event.get("product_id")
         if not product_id:
@@ -230,9 +230,9 @@ class CoinbaseConnector:
         
         # Emit initial book event
         if self.books[product_id]["bids"] and self.books[product_id]["asks"]:
-            await self._emit_book_update(product_id)
+            await self._emit_book_update(product_id, sequence_num)
     
-    async def _handle_l2_update(self, event: dict):
+    async def _handle_l2_update(self, event: dict, sequence_num: int):
         """Handle L2 orderbook updates."""
         product_id = event.get("product_id")
         if not product_id or product_id not in self.books:
@@ -268,9 +268,9 @@ class CoinbaseConnector:
         
         # Emit book update (only if we have both bids and asks)
         if book["bids"] and book["asks"]:
-            await self._emit_book_update(product_id)
+            await self._emit_book_update(product_id, sequence_num)
     
-    async def _emit_book_update(self, product_id: str):
+    async def _emit_book_update(self, product_id: str, sequence_num: int = 0):
         """Emit book update event."""
         book = self.books[product_id]
         
@@ -284,7 +284,7 @@ class CoinbaseConnector:
             timestamp=self.last_update[product_id],
             bids=bids_str,
             asks=asks_str,
-            sequence=None
+            sequence=sequence_num  # Use Coinbase sequence_num
         )
         await event_bus.publish("cex.bookUpdate", book_update)
     
