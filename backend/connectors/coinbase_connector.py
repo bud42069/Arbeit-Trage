@@ -109,7 +109,11 @@ class CoinbaseConnector:
     async def connect_public_ws(self):
         """Connect to Coinbase Advanced Trade WebSocket (public market data)."""
         try:
-            self.ws = await websockets.connect(self.ws_url)
+            # Increase max_size to handle large orderbook snapshots (10MB limit)
+            self.ws = await websockets.connect(
+                self.ws_url,
+                max_size=10 * 1024 * 1024  # 10MB (Coinbase can send 1MB+ snapshots)
+            )
             logger.info(f"Connected to Coinbase WS: {self.ws_url}")
             
             # Start message handler
