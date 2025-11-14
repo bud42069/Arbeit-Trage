@@ -136,7 +136,7 @@ async def get_status():
     
     return {
         "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "version": "1.0.0",
         "connections": connections,
         "risk": risk_service.get_status(),
