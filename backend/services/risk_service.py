@@ -1,7 +1,7 @@
 """Risk service for kill-switches and limits."""
 import logging
 from decimal import Decimal
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from collections import defaultdict
 
 from shared.types import Trade
@@ -17,7 +17,7 @@ class RiskService:
     def __init__(self):
         self.daily_pnl: Decimal = Decimal("0")
         self.daily_trades: int = 0
-        self.daily_reset_time: datetime = datetime.utcnow().replace(hour=0, minute=0, second=0)
+        self.daily_reset_time: datetime = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0)
         self.is_paused: bool = False
         self.pause_reason: str = ""
         self.staleness_checks: dict = {}
@@ -28,10 +28,10 @@ class RiskService:
     async def handle_trade_completed(self, trade: Trade):
         """Track completed trade for risk limits."""
         # Reset daily counters if new day
-        if datetime.utcnow() - self.daily_reset_time > timedelta(days=1):
+        if datetime.now(timezone.utc) - self.daily_reset_time > timedelta(days=1):
             self.daily_pnl = Decimal("0")
             self.daily_trades = 0
-            self.daily_reset_time = datetime.utcnow().replace(hour=0, minute=0, second=0)
+            self.daily_reset_time = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0)
         
         # Update daily stats
         self.daily_pnl += trade.pnl_abs
@@ -50,18 +50,18 @@ class RiskService:
         # Emit pause event
         await event_bus.publish("risk.paused", {
             "reason": reason,
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.now(timezone.utc)
         })
     
     async def check_staleness(self, venue: str, last_update: datetime) -> bool:
         """Check if venue data is stale."""
-        age = (datetime.utcnow() - last_update).total_seconds()
+        age = (datetime.now(timezone.utc) - last_update).total_seconds()
         
         if age > 10.0:  # 10 second staleness threshold
             if venue not in self.staleness_checks or \
-               (datetime.utcnow() - self.staleness_checks[venue]).total_seconds() > 60:
+               (datetime.now(timezone.utc) - self.staleness_checks[venue]).total_seconds() > 60:
                 await self.trigger_pause(f"Venue {venue} data stale: {age:.1f}s")
-                self.staleness_checks[venue] = datetime.utcnow()
+                self.staleness_checks[venue] = datetime.now(timezone.utc)
                 return True
         
         return False
@@ -85,7 +85,7 @@ class RiskService:
         logger.info("Risk service resumed")
         
         await event_bus.publish("risk.resumed", {
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.now(timezone.utc)
         })
 
 
