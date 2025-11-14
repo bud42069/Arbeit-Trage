@@ -162,6 +162,7 @@ class CoinbaseConnector:
                     
                     # NEW FORMAT: Messages have channel and events array
                     channel = data.get("channel")
+                    sequence_num = data.get("sequence_num", 0)  # Extract sequence
                     
                     if channel == "l2_data":
                         # Process l2_data events
@@ -170,9 +171,9 @@ class CoinbaseConnector:
                             event_type = event.get("type")
                             
                             if event_type == "snapshot":
-                                await self._handle_l2_snapshot(event)
+                                await self._handle_l2_snapshot(event, sequence_num)
                             elif event_type == "update":
-                                await self._handle_l2_update(event)
+                                await self._handle_l2_update(event, sequence_num)
                     
                     elif channel == "subscriptions":
                         logger.info(f"✅ Coinbase subscription confirmed: {data}")
