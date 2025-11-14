@@ -379,7 +379,7 @@ Build and deployment status:
 - Frontend: Compiled successfully (esbuild reports 0 errors), served on port 3000
 - Services: Gemini connector operational, Solana connector operational, Coinbase connector code complete but authentication blocked
 - Database: MongoDB operational on localhost:27017, arbitrage database with trades and opportunities collections
-- Preview URL: https://spot-arb-trader.preview.emergentagent.com (live and accessible)
+- Preview URL: https://arb-signal-system.preview.emergentagent.com (live and accessible)
 - Git: All code committed to main branch (10+ commits), README.md and RUNBOOK.md present
 
 Known limitations:

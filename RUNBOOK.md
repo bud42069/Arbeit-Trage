@@ -85,7 +85,7 @@ curl -s http://localhost:8001/api/v1/status | jq
 # }
 
 # 7. Access UI
-# Visit: https://spot-arb-trader.preview.emergentagent.com
+# Visit: https://arb-signal-system.preview.emergentagent.com
 ```
 
 ### Post-Deployment Verification

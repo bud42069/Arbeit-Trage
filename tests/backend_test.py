@@ -9,7 +9,7 @@ from datetime import datetime
 from decimal import Decimal
 
 class ArbitrageAPITester:
-    def __init__(self, base_url="https://spot-arb-trader.preview.emergentagent.com"):
+    def __init__(self, base_url="https://arb-signal-system.preview.emergentagent.com"):
         self.base_url = base_url
         self.tests_run = 0
         self.tests_passed = 0
