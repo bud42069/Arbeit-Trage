@@ -9,11 +9,11 @@
   },
   {
     "content": "Verify API documentation completeness and accuracy",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Verify GitHub setup guide is complete and actionable",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Verify README has proper setup instructions and cross-references",
@@ -25,7 +25,7 @@
   },
   {
     "content": "Test that API endpoints match documentation",
-    "status": "pending"
+    "status": "completed"
   },
   {
     "content": "Verify RUNBOOK procedures are accurate",
