@@ -1,14 +1,10 @@
 [
   {
-    "content": "Phase 5.3: Add rate limiting on API endpoints",
+    "content": "Phase 5.4: Set up Prometheus alerting rules",
     "status": "completed"
   },
   {
-    "content": "Phase 5.4: Set up Prometheus alerting rules",
-    "status": "in_progress"
-  },
-  {
     "content": "Phase 5.5: Perform load testing",
-    "status": "pending"
+    "status": "in_progress"
   }
 ]
