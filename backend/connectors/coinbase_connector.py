@@ -129,22 +129,32 @@ class CoinbaseConnector:
     async def _handle_ws_messages(self):
         """Process incoming WebSocket messages."""
         try:
+            logger.info("Coinbase WS: Starting message handler")
             async for message in self.ws:
-                data = json.loads(message)
+                try:
+                    data = json.loads(message)
+                    logger.info(f"Coinbase WS received: {json.dumps(data)[:200]}")
+                    
+                    msg_type = data.get("type")
+                    
+                    if msg_type == "snapshot":
+                        await self._handle_l2_snapshot(data)
+                    elif msg_type == "update":
+                        await self._handle_l2_update(data)
+                    elif msg_type == "subscriptions":
+                        logger.info(f"Coinbase subscription confirmed: {data}")
+                    elif msg_type == "error":
+                        logger.error(f"Coinbase WS error message: {data}")
+                    else:
+                        logger.warning(f"Coinbase WS unknown message type: {msg_type}")
+                        
+                except json.JSONDecodeError as e:
+                    logger.error(f"Coinbase WS JSON decode error: {e}, message: {message[:200]}")
+                except Exception as e:
+                    logger.error(f"Coinbase WS message handling error: {e}", exc_info=True)
                 
-                msg_type = data.get("type")
-                
-                if msg_type == "snapshot":
-                    await self._handle_l2_snapshot(data)
-                elif msg_type == "update":
-                    await self._handle_l2_update(data)
-                elif msg_type == "subscriptions":
-                    logger.info(f"Coinbase subscription confirmed: {data}")
-                elif msg_type == "error":
-                    logger.error(f"Coinbase WS error message: {data}")
-                
-        except websockets.exceptions.ConnectionClosed:
-            logger.warning("Coinbase WS connection closed")
+        except websockets.exceptions.ConnectionClosed as e:
+            logger.warning(f"Coinbase WS connection closed: code={e.code}, reason={e.reason}")
         except Exception as e:
             logger.error(f"Coinbase WS error: {e}", exc_info=True)
     
