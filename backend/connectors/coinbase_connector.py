@@ -115,12 +115,14 @@ class CoinbaseConnector:
                 self.ws_url,
                 max_size=10 * 1024 * 1024  # 10MB (Coinbase can send 1MB+ snapshots)
             )
+            self.connected = True  # Mark as connected
             logger.info(f"Connected to Coinbase WS: {self.ws_url}")
             
             # Start message handler
             self.ws_task = asyncio.create_task(self._handle_ws_messages())
             
         except Exception as e:
+            self.connected = False
             logger.error(f"Failed to connect to Coinbase WS: {e}")
             raise
     
