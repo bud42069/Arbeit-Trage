@@ -8,7 +8,7 @@ from solders.pubkey import Pubkey
 
 async def main():
     # Connect to Helius
-    helius_url = "https://mainnet.helius-rpc.com/?api-key=625e29ab-4bea-4694-b7d8-9fdda5871969"
+    helius_url = "https://mainnet.helius-rpc.com/?api-key=spot-arb-trader"
     client = AsyncClient(helius_url)
     
     # Orca Whirlpool SOL/USDC pool

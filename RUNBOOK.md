@@ -85,7 +85,7 @@ curl -s http://localhost:8001/api/v1/status | jq
 # }
 
 # 7. Access UI
-# Visit: https://arbitrage-app-1.preview.emergentagent.com
+# Visit: https://spot-arb-trader.preview.emergentagent.com
 ```
 
 ### Post-Deployment Verification
