@@ -4,10 +4,10 @@ from decimal import Decimal
 import sys
 import os
 
-# Add parent directory to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+# Add backend directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../backend'))
 
-from backend.connectors.solana_connector import PoolMath
+from connectors.solana_connector import PoolMath
 
 
 class TestConstantProductQuote:
