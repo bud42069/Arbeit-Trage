@@ -8,7 +8,7 @@ import time
 import logging
 from typing import Dict, Optional, List
 from decimal import Decimal
-from datetime import datetime
+from datetime import datetime, timezone
 import httpx
 from websockets.asyncio.client import connect
 from websockets.exceptions import ConnectionClosed
@@ -129,7 +129,7 @@ class GeminiConnector:
             book_update = BookUpdate(
                 venue="gemini",
                 pair=symbol,
-                timestamp=datetime.utcnow(),
+                timestamp=datetime.now(timezone.utc),
                 bids=bids,
                 asks=asks,
                 sequence=0
