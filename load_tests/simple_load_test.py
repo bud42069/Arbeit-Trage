@@ -56,28 +56,28 @@ async def run_load_test():
     print("=" * 60)
     print("CEX/DEX Arbitrage Platform - Load Test")
     print("=" * 60)
-    print(f"\nConfiguration:")
-    print(f"  Base URL: {BASE_URL}")
-    print(f"  Concurrent Users: {CONCURRENT_USERS}")
-    print(f"  Requests per User: {len(ENDPOINTS)}")
-    print(f"  Total Requests: {CONCURRENT_USERS * len(ENDPOINTS)}")
-    print(f"\nStarting load test at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}...")
-    print("-" * 60)
     
     # Define test endpoints
-    global ENDPOINTS
-    ENDPOINTS = [
+    endpoints = [
         "/api/v1/status",
         "/api/v1/opportunities?limit=50",
         "/api/v1/trades?limit=100",
         "/api/metrics",
     ]
     
+    print(f"\nConfiguration:")
+    print(f"  Base URL: {BASE_URL}")
+    print(f"  Concurrent Users: {CONCURRENT_USERS}")
+    print(f"  Requests per User: {len(endpoints)}")
+    print(f"  Total Requests: {CONCURRENT_USERS * len(endpoints)}")
+    print(f"\nStarting load test at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}...")
+    print("-" * 60)
+    
     start_time = time.time()
     
     # Create concurrent user tasks
     tasks = [
-        load_test_scenario(user_id, ENDPOINTS)
+        load_test_scenario(user_id, endpoints)
         for user_id in range(CONCURRENT_USERS)
     ]
     
