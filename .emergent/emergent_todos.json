@@ -1,27 +1,11 @@
 [
   {
-    "content": "Implement stale-data detection test",
-    "status": "completed"
-  },
-  {
-    "content": "Create unit tests for pool-math calculations",
-    "status": "completed"
-  },
-  {
-    "content": "Create unit tests for PnL calculations",
-    "status": "completed"
-  },
-  {
-    "content": "Run comprehensive test suite and verify all pass",
-    "status": "completed"
-  },
-  {
     "content": "Phase 5.1: Set up CI/CD pipeline with GitHub Actions",
-    "status": "in_progress"
+    "status": "completed"
   },
   {
     "content": "Phase 5.2: Implement authentication and authorization",
-    "status": "pending"
+    "status": "in_progress"
   },
   {
     "content": "Phase 5.3: Add rate limiting on API endpoints",
