@@ -4,7 +4,7 @@ import logging
 import uuid
 from typing import Dict, Optional
 from decimal import Decimal
-from datetime import datetime
+from datetime import datetime, timezone
 
 from shared.types import Opportunity, Trade, Side, OrderStatus
 from shared.events import event_bus
@@ -40,7 +40,7 @@ class ExecutionEngine:
             pnl_abs=Decimal("0"),
             pnl_pct=Decimal("0"),
             latency_ms=0,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             window_id=opp.window_id,
             status=OrderStatus.PENDING
         )
