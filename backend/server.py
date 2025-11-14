@@ -4,7 +4,7 @@ import logging
 from contextlib import asynccontextmanager
 from typing import List, Optional
 from datetime import datetime, timezone
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Response
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Response, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
