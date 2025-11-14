@@ -37,13 +37,13 @@ const Trades = () => {
         const data = await response.json();
         setTrades(data.trades || []);
         
-        // Calculate stats
+        // Calculate stats using actual total count from database
         if (data.trades && data.trades.length > 0) {
           const totalPnl = data.trades.reduce((sum, t) => sum + (parseFloat(t.pnl_abs) || 0), 0);
           const avgLatency = data.trades.reduce((sum, t) => sum + (parseInt(t.latency_ms) || 0), 0) / data.trades.length;
           
           setStats({
-            total: data.trades.length,
+            total: data.total_count || data.trades.length,  // Use total_count from API
             totalPnl,
             avgLatency
           });
