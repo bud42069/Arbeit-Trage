@@ -116,7 +116,7 @@ class UserRepository:
         
         # Create default admin
         default_admin = UserCreate(
-            email="admin@arbitrage.local",
+            email="admin@example.com",
             username="admin",
             password="admin123",  # CHANGE THIS IN PRODUCTION
             role=UserRole.ADMIN
