@@ -195,8 +195,10 @@ class CoinbaseConnector:
                     logger.error(f"Coinbase WS message handling error: {e}", exc_info=True)
                 
         except websockets.exceptions.ConnectionClosed as e:
+            self.connected = False
             logger.warning(f"Coinbase WS connection closed: code={e.code}, reason={e.reason}")
         except Exception as e:
+            self.connected = False
             logger.error(f"Coinbase WS error: {e}", exc_info=True)
     
     async def _handle_l2_snapshot(self, event: dict, sequence_num: int):
