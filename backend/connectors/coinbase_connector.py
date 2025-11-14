@@ -124,24 +124,22 @@ class CoinbaseConnector:
         if not self.ws:
             await self.connect_public_ws()
         
-        # Generate WebSocket JWT (simpler payload without aud/uri)
-        jwt_token = self.authenticator.build_jwt(for_websocket=True)
-        
-        # ✅ CORRECTED FORMAT: Use "channels" (plural) as array, and include jwt in proper location
+        # ✅ CRITICAL FIX: Level2 is PUBLIC data - NO JWT needed!
+        # Only user-specific channels need JWT on wss://advanced-trade-ws-user.coinbase.com
+        # Market data endpoint (wss://advanced-trade-ws.coinbase.com) is public
         subscribe_msg = {
             "type": "subscribe",
             "product_ids": [product_id],
-            "channels": ["level2"],  # Changed from "channel" (singular) to "channels" (plural array)
-            "jwt": jwt_token
+            "channel": "level2"  # Singular "channel" for public endpoint
         }
         
-        logger.info(f"Sending subscription for {product_id} with WebSocket JWT")
+        logger.info(f"Sending PUBLIC subscription for {product_id} (no auth required)")
         logger.debug(f"Subscription message: {json.dumps(subscribe_msg, indent=2)}")
         await self.ws.send(json.dumps(subscribe_msg))
         self.subscribed_products.append(product_id)
         self.books[product_id] = {"bids": [], "asks": []}
         
-        logger.info(f"Subscribed to {product_id} L2 orderbook")
+        logger.info(f"✅ Subscribed to {product_id} L2 orderbook")
     
     async def _handle_ws_messages(self):
         """Process incoming WebSocket messages."""
