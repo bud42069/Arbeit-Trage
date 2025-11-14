@@ -79,64 +79,169 @@ agenthub/agents/youtube/db
 # Mobile development
 android-sdk/ frontend/node_modules/.cache/default-development/2.pack
 frontend/node_modules/.cache/default-development/2.pack
--e 
-# Environment files
+# Environment files - CRITICAL SECURITY
+# Real .env files with secrets MUST be excluded
 *.env
-*.env.*
--e 
-# Environment files
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# EXCEPTION: Allow .env.template files (no secrets)
+!*.env.template
+!.env.template
+# Environment files - CRITICAL SECURITY
+# Real .env files with secrets MUST be excluded
 *.env
-*.env.*
--e 
-# Environment files
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# EXCEPTION: Allow .env.template files (no secrets)
+!*.env.template
+!.env.template
+# Environment files - CRITICAL SECURITY
+# Real .env files with secrets MUST be excluded
 *.env
-*.env.*
--e 
-# Environment files
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# EXCEPTION: Allow .env.template files (no secrets)
+!*.env.template
+!.env.template
+# Environment files - CRITICAL SECURITY
+# Real .env files with secrets MUST be excluded
 *.env
-*.env.*
--e 
-# Environment files
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# EXCEPTION: Allow .env.template files (no secrets)
+!*.env.template
+!.env.template
+# Environment files - CRITICAL SECURITY
+# Real .env files with secrets MUST be excluded
 *.env
-*.env.*
--e 
-# Environment files
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# EXCEPTION: Allow .env.template files (no secrets)
+!*.env.template
+!.env.template
+# Environment files - CRITICAL SECURITY
+# Real .env files with secrets MUST be excluded
 *.env
-*.env.*
--e 
-# Environment files
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# EXCEPTION: Allow .env.template files (no secrets)
+!*.env.template
+!.env.template
+# Environment files - CRITICAL SECURITY
+# Real .env files with secrets MUST be excluded
 *.env
-*.env.*
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# EXCEPTION: Allow .env.template files (no secrets)
+!*.env.template
+!.env.template
 frontend/node_modules/.cache/default-development/0.pack
--e 
-# Environment files
+# Environment files - CRITICAL SECURITY
+# Real .env files with secrets MUST be excluded
 *.env
-*.env.*
--e 
-# Environment files
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# EXCEPTION: Allow .env.template files (no secrets)
+!*.env.template
+!.env.template
+# Environment files - CRITICAL SECURITY
+# Real .env files with secrets MUST be excluded
 *.env
-*.env.*
--e 
-# Environment files
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# EXCEPTION: Allow .env.template files (no secrets)
+!*.env.template
+!.env.template
+# Environment files - CRITICAL SECURITY
+# Real .env files with secrets MUST be excluded
 *.env
-*.env.*
--e 
-# Environment files
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# EXCEPTION: Allow .env.template files (no secrets)
+!*.env.template
+!.env.template
+# Environment files - CRITICAL SECURITY
+# Real .env files with secrets MUST be excluded
 *.env
-*.env.*
--e 
-# Environment files
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# EXCEPTION: Allow .env.template files (no secrets)
+!*.env.template
+!.env.template
+# Environment files - CRITICAL SECURITY
+# Real .env files with secrets MUST be excluded
 *.env
-*.env.*
--e 
-# Environment files
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# EXCEPTION: Allow .env.template files (no secrets)
+!*.env.template
+!.env.template
+# Environment files - CRITICAL SECURITY
+# Real .env files with secrets MUST be excluded
 *.env
-*.env.*
--e 
-# Environment files
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# EXCEPTION: Allow .env.template files (no secrets)
+!*.env.template
+!.env.template
+# Environment files - CRITICAL SECURITY
+# Real .env files with secrets MUST be excluded
 *.env
-*.env.*
--e 
-# Environment files
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# EXCEPTION: Allow .env.template files (no secrets)
+!*.env.template
+!.env.template
+# Environment files - CRITICAL SECURITY
+# Real .env files with secrets MUST be excluded
 *.env
-*.env.*
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+
+# EXCEPTION: Allow .env.template files (no secrets)
+!*.env.template
+!.env.template
