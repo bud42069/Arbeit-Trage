@@ -145,8 +145,9 @@ async def monitor_system_status():
 # ============= REST Endpoints =============
 
 @app.get("/api/v1/status")
-async def get_status():
-    """Get system status."""
+@limiter.limit("200/minute")
+async def get_status(request: Request):
+    """Get system status (rate limit: 200/min)."""
     connections = {
         "gemini": gemini_connector.connected,
         "solana": solana_connector.connected
@@ -167,8 +168,9 @@ async def get_status():
 
 
 @app.get("/api/v1/opportunities")
-async def get_opportunities(limit: int = 100) -> dict:
-    """Get recent opportunities."""
+@limiter.limit("100/minute")
+async def get_opportunities(request: Request, limit: int = 100) -> dict:
+    """Get recent opportunities (rate limit: 100/min)."""
     if not db_module.opportunity_repo:
         raise HTTPException(status_code=503, detail="Database not initialized")
     
@@ -177,11 +179,13 @@ async def get_opportunities(limit: int = 100) -> dict:
 
 
 @app.get("/api/v1/trades")
+@limiter.limit("100/minute")
 async def get_trades(
+    request: Request,
     asset: Optional[str] = None,
     limit: int = 100
 ) -> dict:
-    """Get recent trades with total count."""
+    """Get recent trades with total count (rate limit: 100/min)."""
     if not db_module.trade_repo:
         raise HTTPException(status_code=503, detail="Database not initialized")
     
@@ -214,13 +218,15 @@ async def get_windows(asset: Optional[str] = None, limit: int = 50) -> List[dict
 
 
 @app.post("/api/v1/test/inject-opportunity")
+@limiter.limit("20/minute")
 async def inject_test_opportunity(
+    request: Request,
     asset: str = "SOL-USD",
     direction: str = "cex_to_dex",
     spread_pct: float = 2.5
 ):
     """
-    TEST ENDPOINT: Inject synthetic opportunity to demonstrate pipeline.
+    TEST ENDPOINT: Inject synthetic opportunity (rate limit: 20/min).
     
     This bypasses real market data detection and creates a fake arbitrage
     opportunity to test signal → execution → UI flow.
@@ -265,11 +271,13 @@ class ControlAction(BaseModel):
 
 
 @app.post("/api/v1/controls/pause")
+@limiter.limit("10/minute")
 async def pause_trading(
+    request: Request,
     action: ControlAction,
     current_user = Depends(require_operator)
 ):
-    """Pause trading (requires operator or admin role)."""
+    """Pause trading (requires operator or admin role, rate limit: 10/min)."""
     reason = action.reason or f"Manual pause by {current_user.username}"
     await risk_service.trigger_pause(reason)
     
@@ -279,8 +287,9 @@ async def pause_trading(
 
 
 @app.post("/api/v1/controls/resume")
-async def resume_trading(current_user = Depends(require_operator)):
-    """Resume trading (requires operator or admin role)."""
+@limiter.limit("10/minute")
+async def resume_trading(request: Request, current_user = Depends(require_operator)):
+    """Resume trading (requires operator or admin role, rate limit: 10/min)."""
     await risk_service.resume()
     
     logger.info(f"Trading resumed by {current_user.username}")
