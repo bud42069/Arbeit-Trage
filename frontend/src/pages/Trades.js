@@ -56,30 +56,59 @@ const Trades = () => {
     fetchTrades();
   }, []);
 
-  const handleExportCSV = () => {
+  const handleExportCSV = async () => {
     if (trades.length === 0) return;
     
-    // Generate CSV
-    const headers = ['Timestamp', 'Asset', 'Direction', 'Size USD', 'CEX Price', 'DEX Price', 'PnL USD', 'PnL %', 'Latency ms'];
-    const rows = trades.map(t => [
-      new Date(t.timestamp).toISOString(),
-      t.asset,
-      t.direction,
-      (parseFloat(t.size_asset) * parseFloat(t.cex_price)).toFixed(2),
-      parseFloat(t.cex_price).toFixed(6),
-      parseFloat(t.dex_price).toFixed(6),
-      parseFloat(t.pnl_abs).toFixed(2),
-      parseFloat(t.pnl_pct).toFixed(2),
-      parseInt(t.latency_ms).toFixed(0)
-    ]);
-    
-    const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `trades_${Date.now()}.csv`;
-    a.click();
+    try {
+      // Show loading toast
+      toast.info('Exporting all trades...', {
+        description: 'Fetching complete trade history from database'
+      });
+      
+      // Fetch ALL trades from database (no limit)
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/v1/trades?limit=10000`);
+      const data = await response.json();
+      const allTrades = data.trades || [];
+      
+      if (allTrades.length === 0) {
+        toast.error('No trades to export');
+        return;
+      }
+      
+      // Generate CSV from ALL trades
+      const headers = ['Timestamp', 'Asset', 'Direction', 'Size USD', 'CEX Price', 'DEX Price', 'PnL USD', 'PnL %', 'Latency ms', 'Status'];
+      const rows = allTrades.map(t => [
+        new Date(t.timestamp).toISOString(),
+        t.asset,
+        t.direction,
+        (parseFloat(t.size_asset) * parseFloat(t.cex_price)).toFixed(2),
+        parseFloat(t.cex_price).toFixed(6),
+        parseFloat(t.dex_price).toFixed(6),
+        parseFloat(t.pnl_abs).toFixed(2),
+        parseFloat(t.pnl_pct).toFixed(2),
+        parseInt(t.latency_ms).toFixed(0),
+        t.status
+      ]);
+      
+      const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `trades_complete_${Date.now()}.csv`;
+      a.click();
+      
+      // Success toast
+      toast.success(`Exported ${allTrades.length} trades`, {
+        description: `File: trades_complete_${Date.now()}.csv`
+      });
+      
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast.error('Export failed', {
+        description: 'Could not fetch complete trade history'
+      });
+    }
   };
 
   return (
